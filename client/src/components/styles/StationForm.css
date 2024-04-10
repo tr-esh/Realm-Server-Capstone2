@@ -1,0 +1,19 @@
+
+h2{
+    font-size: 2.4rem;
+    line-height: 2rem;
+    font-family: 'Archivo', sans-serif;
+    margin-bottom: 2rem;
+    margin: 2rem;
+}
+h2>span{
+    color: #8cacff;
+}
+/* Add this to your CSS file (e.g., StationForm.css) */
+.custom-dialog {
+    border-radius: 30px; /* Set the border radius as needed */
+
+  }
+.content {
+   padding: 5rem;
+}

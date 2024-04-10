@@ -1,0 +1,9 @@
+/* Greeting component styles here */
+
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+    .responsive-image {
+      display: none;
+    }
+  }
+  

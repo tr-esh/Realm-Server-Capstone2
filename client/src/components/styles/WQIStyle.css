@@ -1,0 +1,54 @@
+.interpretation-holder {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+
+.point-holder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #85b6ff;
+  margin-bottom: 1rem;
+  margin-right: 1rem; /* Add margin-right for spacing between point-holders */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.interpretation {
+  flex: 0.8; /* Allow the interpretation div to take up the remaining space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: 'Poppins';
+}
+.class-holder{
+  margin-top: 3rem;
+}
+.Qi-container{
+    padding: 2rem;
+}
+/* Customize the scrollbar for Material-UI DialogContent */
+.MuiDialogContent-root {
+    /* Webkit-based browsers (Chrome, Safari) */
+    &::-webkit-scrollbar {
+      width: 12px; /* Set the width of the scrollbar */
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: #415d86; /* Set the color of the scrollbar thumb (handle) */
+      border-radius: 6px; /* Set the border-radius of the scrollbar thumb */
+    }
+  
+    &::-webkit-scrollbar-track {
+      background-color: #0d2135; /* Set the color of the scrollbar track */
+      border-radius: 6px; /* Set the border-radius of the scrollbar track */
+    }
+  
+    /* Firefox */
+    scrollbar-color: #415d86 #0d2135; /* Set the color of the scrollbar thumb and track for Firefox */
+  }
+  

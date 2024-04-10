@@ -1,0 +1,27 @@
+/* ScrollToTopButton.css */
+
+.scroll-to-top-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 2rem;
+    text-align: center;
+    z-index: 999;
+  }
+  
+  .scroll-to-top-btn.visible {
+    display: block;
+  }
+  
+  .scroll-to-top-btn:hover {
+    background-color: #0056b3;
+  }
+  

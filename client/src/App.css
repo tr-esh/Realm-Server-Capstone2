@@ -1,0 +1,36 @@
+/* scrollbar */
+@import 'simplebar-react/dist/simplebar.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,800&display=swap');
+
+
+ /* :root {
+  --glass: rgb(96,228,222);
+} */
+
+* {
+  margin: 0;
+  padding: 0;
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 12px; /* Set the width of the scrollbar */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #415d86; /* Set the color of the scrollbar thumb (handle) */
+    border-radius: 8rem; /* Set the border-radius of the scrollbar thumb */
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #0d2135; /* Set the color of the scrollbar track */
+    border-radius: 8rem; /* Set the border-radius of the scrollbar track */
+  }
+
+  /* Firefox */
+  scrollbar-color: #415d86 #0d2135; /* Set the color of the scrollbar thumb and track for Firefox */
+}
+
+.App {
+  background-color: #0d2135;
+}
+

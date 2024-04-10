@@ -1,0 +1,14 @@
+.custom-table > div > table > tbody > tr:nth-child(even) > td {
+    background-color: #0A1929;
+    border-radius: 0;
+  }
+
+  .custom-table > div > table > thead > tr > th:first-child {
+    border-top-left-radius: 25px; /* Adjust the radius value as needed */
+    border-bottom-left-radius: 0;
+  }
+  
+  .custom-table > div > table > thead > tr > th:last-child {
+    border-top-right-radius: 25px; /* Adjust the radius value as needed */
+    border-bottom-right-radius: 0;
+  }

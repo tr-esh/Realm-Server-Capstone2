@@ -1,0 +1,24 @@
+.greeting-mood{
+    color: #0d2135;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: 'Archivo', sans-serif;
+}
+.subject-greet{
+    color: #0d2135;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: 'Archivo', sans-serif;
+}
+.sub-greet{
+    color: #0d2135;
+    font-weight: 500;
+    font-family: 'Poppins';
+}
+
+.user-greet{
+    text-transform: uppercase;
+    color: white;
+    font-weight: 600;
+    font-family: 'Poppins';
+}
