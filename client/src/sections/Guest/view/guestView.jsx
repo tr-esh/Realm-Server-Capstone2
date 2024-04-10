@@ -11,7 +11,21 @@ import NewsCard from './newsCard';
 import newsInfo from '../../../components/elements/Newsdata'
 import Headline from '../../../components/elements/Headline';
 import GuestHeaderCard from './guestHeaderCard';
-import fetchWaterImage from '../../../img/excellent.png';
+import waterConsume from '../../../img/excellent.png';
+import poorWater from '../../../img/veryPoor.png';
+import badWater from '../../../img/badWater.png';
+import fair from '../../../img/fair.png';
+import drinkWater from '../../../img/glass-of-water.png';
+import monitorWater from '../../../img/monitorWater.png';
+import minorPurification from '../../../img/minorPurification.png';
+import waterTreatment from '../../../img/waterTreatment.png';
+import professional from '../../../img/professional.png';
+import Poor from '../../../img/Poor.png';
+import Water from '../../../img/water.png';
+
+
+
+
 
 export default function GuestView() {
 
@@ -35,7 +49,7 @@ export default function GuestView() {
 
   const suggestions = {
     'Excellent': {
-        suggestionImageSrc: fetchWaterImage,
+        suggestionImages: [drinkWater, fair, waterConsume], // Example images for each suggestion
         suggestionSubheader: [
             'Suitable for drinking.',
             'No further treatment or action is necessary.',
@@ -43,14 +57,15 @@ export default function GuestView() {
         ]
     },
     'Good': {
-        suggestionImageSrc: fetchWaterImage, // You can set appropriate images for each status
+        suggestionImages: [drinkWater, monitorWater],
         suggestionSubheader: [
             'Water that is suitable for drinking.',
-            'Continue monitoring the water quality.'
+            'Continue monitoring the water quality.',
+            ''
         ]
     },
     'Fair': {
-        suggestionImageSrc: fetchWaterImage, // You can set appropriate images for each status
+        suggestionImages: [poorWater, minorPurification, Poor ],
         suggestionSubheader: [
             'Water in this range is modestly suitable for drinking.',
             'It may not meet the highest standards of cleanliness, so it\'s advisable to take some precautions.',
@@ -58,7 +73,7 @@ export default function GuestView() {
         ]
     },
     'Poor': {
-        suggestionImageSrc: fetchWaterImage, // You can set appropriate images for each status
+        suggestionImages: [Water, minorPurification, waterTreatment],
         suggestionSubheader: [
             'Water in this range is unsuitable for drinking without treatment.',
             'Minor purification is required before usage.',
@@ -66,7 +81,7 @@ export default function GuestView() {
         ]
     },
     'Very Poor': {
-        suggestionImageSrc: fetchWaterImage, // You can set appropriate images for each status
+        suggestionImages: [poorWater, badWater, professional],
         suggestionSubheader: [
             'Water in this range is unsuitable for drinking without appropriate treatment.',
             'It is crucial to seek alternative sources of water supply or implement a comprehensive water treatment system.',
@@ -74,7 +89,7 @@ export default function GuestView() {
         ]
     },
     'Unknown': {
-        suggestionImageSrc: fetchWaterImage, // You can set appropriate images for each status
+        suggestionImages: [], // No images for unknown status
         suggestionSubheader: [
             'Unknown status',
             '', // Add empty strings for unused lines
@@ -82,6 +97,7 @@ export default function GuestView() {
         ]
     }
 };
+
 
     const navigate = useNavigate();
     const [stationdetail, setStationDetail] = useState('Station HO1');
@@ -125,14 +141,24 @@ export default function GuestView() {
         // Get the status of the clicked station
         const stationStatus = station.status;
     
-        // Update the station suggestions based on the status
-        setStationSuggestions({
-            suggestionImageSrc: suggestions[stationStatus].suggestionImageSrc,
-            suggestionSubheader: suggestions[stationStatus].suggestionSubheader
-        });
+        // Check if the station status exists in the suggestions object
+        if (suggestions.hasOwnProperty(stationStatus)) {
+            // Update the station suggestions based on the status
+            setStationSuggestions({
+                suggestionImages: suggestions[stationStatus].suggestionImages,
+                suggestionSubheader: suggestions[stationStatus].suggestionSubheader
+            });
+        } else {
+            // Handle the case when the status is not found in suggestions
+            setStationSuggestions({
+                suggestionImages: [], // Set empty images array
+                suggestionSubheader: ['Status suggestions not available'] // Provide a default message
+            });
+        }
     
         console.log("Optimal station:", optimalStation);
     };
+    
     
 
 
@@ -242,17 +268,18 @@ export default function GuestView() {
                         marginTop: '3px', 
                         fontFamily: 'Poppins' }}>
                     {stationSuggestions.suggestionSubheader && stationSuggestions.suggestionSubheader.map((suggestion, index) => (
-                        <Grid key={index} item xs={12} sm={4} md={4}>
-                            <StationRecoCard
-                                suggestionImageSrc={stationSuggestions.suggestionImageSrc}
-                                sx={{
-                                    backgroundColor: 'transparent',
-                                    boxShadow: 'none'
-                                }}
-                                suggestionSubheader={suggestion}
-                            />
-                        </Grid>
-                    ))}
+    <Grid key={index} item xs={12} sm={4} md={4}>
+        <StationRecoCard
+            suggestionImageSrc={stationSuggestions.suggestionImages[index]} // Use corresponding image for each suggestion
+            sx={{
+                backgroundColor: 'transparent',
+                boxShadow: 'none'
+            }}
+            suggestionSubheader={suggestion}
+        />
+    </Grid>
+))}
+
                 </Grid>
             </Grid>
 
