@@ -218,9 +218,9 @@ export default function GuestView() {
                                                 <Avatar alt="Station Image" src={station.stationImage && station.stationImage.url} sx={{ width: 80, height: 80, borderRadius: '15px' }} />
                                             </TableCell>
                                             <TableCell align="left" sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins', paddingTop: '2.5rem' }}>
-                                                <Typography variant="body1" sx={{ fontWeight: '700', color: '#8cacff',  fontFamily: 'Poppins' }}>{station.stationName}</Typography>
+                                                <Typography variant="body2" sx={{ fontWeight: '700', color: '#8cacff',  fontFamily: 'Poppins' }}>{station.stationName}</Typography>
                                                 <Typography variant="body2" sx={{ fontWeight: '500', fontFamily: 'Poppins' }} >{station.siteLocation}</Typography> 
-                                                <Typography variant="body2" sx={{ fontFamily: 'Poppins' , fontWeight: 300, fontSize: '0.9rem', marginBottom: '1.5rem'}} >{station.address}</Typography>
+                                                <Typography variant="subtitle2" sx={{ fontFamily: 'Poppins' , fontWeight: 300, fontSize: '0.9rem', marginBottom: '1.5rem'}} >{station.address}</Typography>
                                             </TableCell>
                                             <TableCell align="center" sx={{ borderBottom: '1px solid #03324e' }}>
                                             <Button
@@ -228,12 +228,12 @@ export default function GuestView() {
                                                 sx={{
                                                     fontFamily: 'Poppins',
                                                     fontWeight: 500,
-                                                    fontSize: '0.9rem',
+                                                    fontSize: '0.7rem',
                                                     borderRadius: '2rem',
                                                     textTransform: 'none',
                                                     backgroundColor: statusColors[station.status], // Assuming status always exists now
                                                     color: '#000000', // Set text color
-                                                    width: '7rem',
+                                                    width: '100%',
                                                     height: '2rem',
                                                     boxShadow: 'none'
                                                 }}
@@ -253,8 +253,8 @@ export default function GuestView() {
 
               
                 <Grid container spacing={4} mt={5} sx={{ borderRadius: '15px', overflow: 'hidden', boxShadow: 'none' , marginLeft: 5}}>
-                <Grid item xs={12} sx={{ backgroundColor: '#001227', borderTopLeftRadius: '30px', borderTopRightRadius: '30px', borderBottomLeftRadius: '0', borderBottomRightRadius: '0', padding: '1rem' }}>
-                    <Typography variant="h6" sx={{ color: '#8cacff', fontFamily: "Poppins", fontWeight: 700, textTransform: 'uppercase' }}>
+                <Grid item  xs={12} sm={12} md={12} lg={12} sx={{ backgroundColor: '#001227', borderTopLeftRadius: '30px', borderTopRightRadius: '30px', borderBottomLeftRadius: '0', borderBottomRightRadius: '0', padding: '1rem' }}>
+                    <Typography variant="h7" sx={{ color: '#8cacff', fontFamily: "Poppins", fontWeight: 700, textTransform: 'uppercase' }}>
                         Recommended for you today!
                     </Typography>
                 </Grid>
@@ -268,7 +268,7 @@ export default function GuestView() {
                         marginTop: '3px', 
                         fontFamily: 'Poppins' }}>
                     {stationSuggestions.suggestionSubheader && stationSuggestions.suggestionSubheader.map((suggestion, index) => (
-    <Grid key={index} item xs={12} sm={4} md={4}>
+    <Grid key={index} item xs={12} sm={4} md={4} lg={4}> 
         <StationRecoCard
             suggestionImageSrc={stationSuggestions.suggestionImages[index]} // Use corresponding image for each suggestion
             sx={{
@@ -287,18 +287,9 @@ export default function GuestView() {
            
 
             <Grid item xs={12} sm={12} md={12} mt={6} sx={{marginLeft: 4}}>
-                <span style={{ color: 'white', 
-                               fontFamily: "Poppins", 
-                               fontWeight: 700,
-                               fontSize: 22, 
-                               textTransform: 'uppercase',
-                               color: '#8cacff', 
-
-                               
-                    }}
-                    >
-                        Gain Insights 💭
-                    </span>
+                    <Typography variant="h7" sx={{ color: '#8cacff', fontFamily: "Poppins", fontWeight: 700, textTransform: 'uppercase' }}>
+                    Gain Insights 💭
+                    </Typography>
             </Grid>
 
             <Grid container spacing={4} margin={1}>

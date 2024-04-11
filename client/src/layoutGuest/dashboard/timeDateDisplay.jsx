@@ -44,7 +44,6 @@ export default function TimeDateDisplay({sx, ...other}) {
         direction="row"
         sx={{
             borderRadius: 10,
-            m: 1,
             backgroundColor: 'transparent',
             boxShadow: 'none',
             position: 'relative',
@@ -54,7 +53,7 @@ export default function TimeDateDisplay({sx, ...other}) {
       >
         <Stack>
             <Typography
-                    variant="subtitle"
+                    variant="subtitle2"
                     sx={{
                     fontFamily: "Poppins",
                     fontWeight: '600',

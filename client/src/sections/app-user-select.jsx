@@ -19,7 +19,6 @@ export default function AppUserSelect({
       direction="row"
       sx={{
         borderRadius: 10,
-        m: 1,
         backgroundColor: '#10273d',
         boxShadow: 'none',
         ...sx,
@@ -37,12 +36,12 @@ export default function AppUserSelect({
           <img
             src={imageSource}
             alt="Widget Image"
-            style={{ width: imageSize, height: 'auto' }}
+            style={{ width: imageSize, height: 'auto', marginTop: '1rem' }}
           />
         )}
 
         {subheader && (
-          <Typography variant="h5" 
+          <Typography variant="h6" 
                       sx={{ color: 'white', 
                             textAlign: 'center', 
                             marginBottom: '2rem',

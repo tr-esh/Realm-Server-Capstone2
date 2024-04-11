@@ -60,10 +60,9 @@ export default function NewsCard({
 
           {/* Additional Information */}
           <Typography
-            variant="subtitle1"
+            variant="subtitle2"
             sx={{
               color: 'white',
-              fontSize: 13,
               fontFamily: "Archivo, 'sans-serif'",
               fontWeight: '300',
               lineHeight: 0.9,
@@ -78,7 +77,7 @@ export default function NewsCard({
             <div style={{
               color: 'white',
               fontSize: 20,
-              fontFamily: "Archivo, 'sans-serif'",
+              fontFamily: "Poppins",
               fontWeight: '700',
               textTransform: 'uppercase',
               // Underline title on hover
@@ -93,8 +92,8 @@ export default function NewsCard({
             <div style={{
               color: 'rgba(140, 172, 255, 1)',
               fontFamily: 'rgba(140, 172, 255, 1)',
-              fontSize: 18,
-              marginTop: '1rem',
+              fontSize: 14,
+              marginTop: '0.7rem',
             }}>
               {publisher}
             </div>

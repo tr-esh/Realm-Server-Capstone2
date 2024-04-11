@@ -51,7 +51,7 @@ export default function UserSelect() {
     <div className='user-main'>
       <Container maxWidth="lg">
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={12} md={12}>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
             <Typography variant='h6' mt={3}
               sx={{
                 marginLeft: '2rem',
@@ -61,11 +61,11 @@ export default function UserSelect() {
               SELECT <span style={{ color: '#8cacff' }}>USER</span> TYPE
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={12} md={4} lg={4}>
+          <Grid item xs={12} sm={12} md={4} lg={4} sx={{ display: 'flex', justifyContent: 'center' }}> {/* Centering the items */}
             <Button
               sx={{
                 borderRadius: '40px',
-                width: { xs: '100%', sm: 350, lg: 350 }
+                width: { xs: '70%', sm: '100%', lg: 350 } // Adjusted width for 'xs'
               }}
               onClick={() => handleRoleSelection('Guest')}
             >
@@ -76,11 +76,11 @@ export default function UserSelect() {
               />
             </Button>
           </Grid>
-          <Grid item xs={12} sm={12} md={4} lg={4}>
+          <Grid item xs={12} sm={12} md={4} lg={4} sx={{ display: 'flex', justifyContent: 'center' }}> {/* Centering the items */}
             <Button
               sx={{
                 borderRadius: '40px',
-                width: { xs: '100%', sm: 350, lg: 350 }
+                width: { xs: '70%', sm: '100%', lg: 350 } // Adjusted width for 'xs'
               }}
               onClick={() => handleRoleSelection('Admin')}
             >
@@ -91,11 +91,11 @@ export default function UserSelect() {
               />
             </Button>
           </Grid>
-          <Grid item xs={12} sm={12} md={4} lg={4}>
+          <Grid item xs={12} sm={12} md={4} lg={4} sx={{ display: 'flex', justifyContent: 'center' }}> {/* Centering the items */}
             <Button
               sx={{
                 borderRadius: '40px',
-                width: { xs: '100%', sm: 350, lg: 350 }
+                width: { xs: '70%', sm: '100%', lg: 350 } // Adjusted width for 'xs'
               }}
               onClick={() => handleRoleSelection('Monitoring-Officer')}
             >

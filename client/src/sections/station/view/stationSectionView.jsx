@@ -35,9 +35,9 @@ export default function StationSectionView() {
         const data = await response.json();
         console.log("Data received:", data);
         
-        // Assuming the response structure is consistent with your example and you're interested in the first station's data only.
-        const stationData = data[0]?.data; // Safely accessing the first station's data
-        
+        // Find the object in the data array that matches the stationId
+        const stationData = data.find(item => item.stationId === stationId)?.predictions;
+  
         if (stationData) {
           const chartDataFormatted = stationData.map(item => ({
             // You might need to format the date as per your chart requirements

@@ -14,7 +14,7 @@
       @media (max-width: 600px) {
         .user-main {
           background-color: #001227;
-          height: 100vh;
+          height: 100%;
         }
       }
 

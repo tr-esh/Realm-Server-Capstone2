@@ -111,15 +111,6 @@ const preprocessDataForLSTM = async () => {
   }
 };
 
-//data training
-const preprocessAndTrainModels = async () => {
-  const data = await preprocessDataForLSTM();
-  for (const stationData of data) {
-    const { stationId, data: stationDataArray } = stationData;
-    await trainModelForStation(stationId, stationDataArray);
-  }
-};
-
 const trainModelForStation = async (stationId, data) => {
   const modelSavePath = path.join(modelSaveBasePath, `station_${stationId}`);
   ensureModelDirectoryExists(modelSavePath);
@@ -143,6 +134,8 @@ const trainModelForStation = async (stationId, data) => {
   const xs = tf.tensor3d(sequences);
   const ys = tf.tensor2d(labels, [labels.length, 1]);
 
+  console.log('Input data shape (xs):', xs.shape);
+
   await model.fit(xs, ys, {
     batchSize: 32,
     epochs: 100
@@ -152,12 +145,21 @@ const trainModelForStation = async (stationId, data) => {
   console.log(`Model for station ${stationId} saved.`);
 };
 
+//data training
+const preprocessAndTrainModels = async () => {
+  const data = await preprocessDataForLSTM();
+  for (const stationData of data) {
+    const { stationId, data: stationDataArray } = stationData;
+    await trainModelForStation(stationId, stationDataArray);
+  }
+};
+
 const defineModel = () => {
   const model = tf.sequential();
   model.add(tf.layers.lstm({ units: 128, returnSequences: true, inputShape: [sequenceLength, 1] }));
   model.add(tf.layers.lstm({ units: 64, returnSequences: true }));
   model.add(tf.layers.lstm({ units: 32, returnSequences: false }));
-  model.add(tf.layers.dense({ units: 1 }));
+  model.add(tf.layers.dense({ units: 5 }));
 
   return model;
 };
@@ -175,12 +177,13 @@ const loadModelForStation = async (stationId) => {
   }
 };
 
-const generateSequencesForNext5Days = (data) => {
+const generateSequencesForNext5Days = (data, predictedWQIValues) => {
   const lastSequence = data.slice(-sequenceLength).map(item => [item.wqi]);
   let sequences = [lastSequence];
 
-  for (let i = 1; i < 5; i++) {
-    const nextSequence = data.slice(-sequenceLength + i).map(item => [item.wqi]);
+  // Append the predicted WQI values for the next 5 days to the sequences
+  for (let i = 0; i < 5; i++) {
+    const nextSequence = [...sequences[sequences.length - 1].slice(1), [predictedWQIValues[i] || 0]]; // Default to 0 if predicted value is not available
     sequences.push(nextSequence);
   }
 
@@ -190,27 +193,28 @@ const generateSequencesForNext5Days = (data) => {
 const predictNext5DaysWQIForStation = async (stationId, data) => {
   try {
     const model = await loadModelForStation(stationId);
-    const sequences = generateSequencesForNext5Days(data);
-    const xs = tf.tensor3d(sequences);
-
-    const predictions = model.predict(xs);
-    const predictedValues = Array.from(predictions.dataSync());
-
-    console.log('Predicted values:', predictedValues);
-
     const currentDate = new Date();
-    const dates = [];
-    for (let i = 0; i < 5; i++) {
-      const nextDate = new Date(currentDate);
-      nextDate.setDate(currentDate.getDate() + i);
-      dates.push(nextDate);
-    }
+    const predictions = [];
 
-    const result = dates.map((date, index) => ({
-      stationId,
-      date,
-      wqi: predictedValues[index]
-    }));
+    // Predict WQI for each of the next 5 days
+    for (let i = 0; i < 5; i++) {
+      // Generate sequences for the current data and predicted values
+      const sequences = generateSequencesForNext5Days(data, predictions.map(prediction => prediction.wqi));
+      
+      // Convert sequences to TensorFlow tensor
+      const xs = tf.tensor3d(sequences);
+
+      // Predict WQI values using the model
+      const predictedValues = model.predict(xs);
+      const predictedValue = Array.from(predictedValues.dataSync())[0]; // Assuming single prediction per day
+
+      // Add the predicted value to the predictions array
+      predictions.push({
+        stationId,
+        date: new Date(currentDate.getTime() + i * 24 * 60 * 60 * 1000), // Add 1 day to the current date
+        wqi: predictedValue
+      });
+    }
 
     // Check if any records with the same date already exist in the database
     const existingPredictions = await Predictions.find({ 
@@ -218,40 +222,54 @@ const predictNext5DaysWQIForStation = async (stationId, data) => {
       $expr: { 
         $in: [
           { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
-          dates.map(date => date.toISOString().split('T')[0])
+          predictions.map(prediction => prediction.date.toISOString().split('T')[0])
         ]
       } 
     });
 
     if (existingPredictions.length === 0) {
       // No records with the same date found, save the predictions into the database
-      await Predictions.insertMany(result);
+      await Predictions.insertMany(predictions);
       console.log('Predictions saved successfully.');
     } else {
       // Records with the same date found, handle the situation based on your requirements
       console.log('Predictions with the same date already exist in the database.');
       // You can choose to update existing records or skip saving the predictions
-      
     }
 
-    return result;
+    return predictions;
   } catch (error) {
     console.error(`Error predicting WQI for station ${stationId}: ${error.message}`);
   }
 };
 
+const predictNext5DaysWQIForStations = async (req, res) => {
+  try {
+    // Fetch data for LSTM prediction
+    const data = await preprocessDataForLSTM();
 
-const predictNext5DaysWQIForStations = async () => {
-  const data = await preprocessDataForLSTM();
-  const predictions = {};
+    // Initialize an array to store predictions
+    const predictions = [];
 
-  for (const stationData of data) {
-    const { stationId, data: stationDataArray } = stationData;
-    const predictedValues = await predictNext5DaysWQIForStation(stationId, stationDataArray);
-    predictions[stationId] = predictedValues;
-  }
+    // Loop through each station's data
+    for (const stationData of data) {
+        const { stationId, data: stationDataArray } = stationData;
 
-  return predictions;
+        // Predict WQI for the next 5 days for the current station
+        const predictedValues = await predictNext5DaysWQIForStation(stationId, stationDataArray);
+
+        // Push the stationId and its predictions to the array
+        predictions.push({ stationId, predictions: predictedValues });
+    }
+
+    // Send the predictions as a JSON response
+    res.json(predictions);
+} catch (error) {
+    // Handle any errors that occur during the prediction process
+    console.error('Error predicting WQI for stations:', error);
+    res.status(500).json({ error: 'Internal server error' });
+}
+
 };
 
 const scheduleModelProcessingAndPrediction = () => {
@@ -284,5 +302,7 @@ const scheduleModelProcessingAndPrediction = () => {
 connectDB().catch(err => console.error('Error connecting to database:', err));
 
 module.exports = {
-  scheduleModelProcessingAndPrediction
+  scheduleModelProcessingAndPrediction,
+  predictNext5DaysWQIForStations,
+  preprocessAndTrainModels,
 };

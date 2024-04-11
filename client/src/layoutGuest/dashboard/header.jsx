@@ -6,31 +6,30 @@ import UserNotifPopover from '../../layouts/dashboard/universal/usernotifPopover
 import TimeDateDisplay from './timeDateDisplay';
 import TimeGreeting from '../../components/elements/TimeGreetings';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import { useNavigate } from 'react-router-dom';
+import AccountPopover from '../../layouts/dashboard/universal/guestAccount';
 
 
 export default function Header({ onOpenNav }) {
-    const navigate = useNavigate();
+
     const lgUp = useResponsive('up', 'lg');
-    const imageUrl = new URL('../../img/guest_default.jpg', import.meta.url)
+    
 
     const renderContent = (
         <>
-            <Stack direction="row" alignItems="center" spacing={2}>
-                <Avatar src={imageUrl} alt="Avatar" />
+            <Stack direction="row" alignItems="center" spacing={1}>
+            <Box sx={{ pr: 2 }}>
+                    <AccountPopover />
+                </Box>
                 <TimeGreeting />
             </Stack>
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Stack direction="row" alignItems="center" spacing={2} sx={{ backdropFilter: 'none' }}>
+            <Stack direction="row" alignItems="center" spacing={0} sx={{ backdropFilter: 'none' }}>
                 
                 <TimeDateDisplay />
-                <Divider orientation="vertical" flexItem style={{backgroundColor:'#8cacff', marginTop: "1rem" ,height: '20px'}}/>
                 <UserNotifPopover />
-                <IconButton onClick={() => navigate('/user-select')}>
-                <HomeRoundedIcon style={{color: '#6990f5', fontSize: 30}}/>
-                </IconButton>
+                
             </Stack>
         </>
     );
@@ -51,7 +50,7 @@ export default function Header({ onOpenNav }) {
         >
             <Toolbar
                 sx={{
-                    height: 1,
+                    height: 1.5,
                     px: { lg: 5 },
                 }}
             >

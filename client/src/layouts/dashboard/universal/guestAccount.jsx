@@ -11,7 +11,7 @@ import { Box,
          Typography,
          IconButton } from "@mui/material";
 
-         export default function AccountPopover() {
+         export default function GuestAccount() {
           const { dispatch } = useContext(AuthContext);
           const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ import { Box,
 
             const defaultAccount = {
               displayName: "Gojo Satoru",
-              photoURL: "https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671126.jpg?w=360&t=st=1712841938~exp=1712842538~hmac=18c05cece74420949e3527dcb4c60baf32888296e34659974d04421429ca4b14"
+              photoURL: "https://img.freepik.com/free-psd/3d-render-avatar-character_23-2150611722.jpg?t=st=1712842522~exp=1712846122~hmac=144600d5c33e0f1f8763ea42ac7139e3b5f91796e5eb51297a148461592657ba&w=360"
             };
 
             // Update the photoURL based on the user's role
@@ -108,7 +108,7 @@ import { Box,
                     onClick={handleLogout}
                     sx={{ typography: 'body2', fontFamily: "Archivo, 'sans-serif'", color: 'error.main', py: 1.5 }}
                   >
-                    Logout
+                    HOME
                   </MenuItem>
                 </Popover>
               </>

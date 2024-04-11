@@ -23,11 +23,16 @@ export default function StationRecoCard({
       }}
       {...other}
     >
-      <Stack direction="column" alignItems="center">
+      <Stack
+        direction={{ xs: 'row', md: 'column' }} // Change direction based on screen size
+        alignItems="center"
+        justifyContent="center" // Center stacks horizontally
+        spacing={2}
+      >
         <img
           src={suggestionImageSrc}
           alt="Suggestion Image"
-          style={{ width: '50%', marginBottom: '2rem' }} // Adjust size as needed
+          style={{ width: '33%', maxWidth: '100%', marginBottom: '2rem' }} // Adjust size as needed
         />
         {/* Suggestion Subheader */}
         <Stack direction="column" alignItems="center">
