@@ -1,12 +1,13 @@
 .admin-signin{
     background-image: url('../../img/dark-background.png');
-    background-size: cover;
+    background-position: 50%;
     background-repeat: no-repeat;
+    background-size: auto;
     align-items: center;
-    display: flex;
+    display: grid;
     justify-content: center;
-    height: 100%;
-    width: 100vw
+    height: 100vh;
+    width: 100vw;
 }
 
 .admin-signin>.container {
@@ -16,7 +17,7 @@
     border-radius: 35px;
     color: #263238;
     max-height: 100%;
-    padding: 60px;
+    padding: 50px;
     width: 450px;
     font-family: 'Archivo', sans-serif;
     
@@ -51,14 +52,14 @@ h2>span{
 
 @media (max-width: 600px) {
     .admin-signin {
-        background-color: #001227;
+        background-color: white;
         height: 100%;
     }
 }
 
 @media (max-width: 601px) {
     .admin-signin {
-        background-color: #001227;
+        background-color: white;
         height: 100vh;
     }
 }

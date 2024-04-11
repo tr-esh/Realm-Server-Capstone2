@@ -203,7 +203,8 @@ export default function ViewPerStation () {
                         <Button variant="contained"
                             onClick={handleInitializeData}
                             sx={{
-                                borderRadius: 10,
+                                borderRadius: 5,
+                                padding: '1ch',
                                 backgroundColor: '#8cacff',
                                 marginRight: 1,
                                 fontFamily: "Poppins", 
@@ -215,7 +216,7 @@ export default function ViewPerStation () {
                         <Button variant="contained"
                             onClick={handleTerminateData}
                             sx={{
-                                borderRadius: 10,
+                                borderRadius: 5,
                                 backgroundColor: '#8cacff',
                                 fontFamily: "Poppins",
                                 color: '#001227'

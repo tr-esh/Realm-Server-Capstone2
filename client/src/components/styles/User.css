@@ -15,6 +15,7 @@
         .user-main {
           background-color: #001227;
           height: 100%;
+          
         }
       }
 
@@ -22,6 +23,7 @@
           .user-main {
             background-color: #001227;
             height: 100vh;
+            
           }
       
       } 
