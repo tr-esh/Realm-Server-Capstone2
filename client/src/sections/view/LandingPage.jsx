@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import '../../components/styles/Landing.css';
 
@@ -17,13 +17,13 @@ function LandingPage() {
     <div className='main'>
       <div className='admin-land'>
         <div className='ban-title'>
-          <h3>
+          <Typography className='headline-text' variant={isSmallScreen ? 'h4' : 'h3'}>
             TOWARDS <span> BLUE </span> MONITORING
-          </h3>
-          <p className='banner'>
+          </Typography>
+          <Typography className='banner' variant={isSmallScreen ? 'p1' : 'h6'} style={{textAlign: 'justify'}}>
             Real-time Aqualert Monitoring helps you monitor water status. We provide data results, analytics and other
             information you need, pertaining to the quality of your water source.
-          </p>
+          </Typography>
           <button className='btn' onClick={handleAccessAccount}> ACCESS ACCOUNT </button>
         </div>
         {isSmallScreen ? null : (

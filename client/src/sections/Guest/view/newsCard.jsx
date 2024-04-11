@@ -47,7 +47,7 @@ export default function NewsCard({
           px: 4,
           py: 4,
           borderRadius: 10,
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)), url(${backgroundImage})`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7)), url(${backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           height: '250px', // Set a fixed height for the card
@@ -75,7 +75,7 @@ export default function NewsCard({
               {dateCreated}
             </div>
             <div style={{
-              color: 'white',
+              color: 'rgba(140, 172, 255, 1)',
               fontSize: 20,
               fontFamily: "Poppins",
               fontWeight: '700',
@@ -90,7 +90,7 @@ export default function NewsCard({
             </div>
 
             <div style={{
-              color: 'rgba(140, 172, 255, 1)',
+              color: 'white',
               fontFamily: 'rgba(140, 172, 255, 1)',
               fontSize: 14,
               marginTop: '0.7rem',

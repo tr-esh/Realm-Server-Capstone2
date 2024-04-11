@@ -227,7 +227,7 @@ export default function GuestView() {
                                                 variant="contained"
                                                 sx={{
                                                     fontFamily: 'Poppins',
-                                                    fontWeight: 500,
+                                                    fontWeight: 600,
                                                     fontSize: '0.7rem',
                                                     borderRadius: '2rem',
                                                     textTransform: 'none',
@@ -235,7 +235,8 @@ export default function GuestView() {
                                                     color: '#000000', // Set text color
                                                     width: '100%',
                                                     height: '2rem',
-                                                    boxShadow: 'none'
+                                                    boxShadow: 'none',
+                                                    lineHeight: 1,
                                                 }}
                                                 onClick={() => handleClickStation(station)} // Pass the station object to the event handler
                                                 >
@@ -294,12 +295,12 @@ export default function GuestView() {
 
             <Grid container spacing={4} margin={1}>
               {Headline.map((news, index) => (
-                <Grid key={index} item xs={12} sm={6} md={6}>
+                <Grid key={index} item xs={12} sm={6} md={6} lg={6}>
                     <NewsCard key={index} {...news} sx={{ backgroundColor: '#0A1929' }} />
                 </Grid>
                ))}
                {newsInfo.map((news, index) => (
-                 <Grid key={index} item xs={12} sm={6} md={3}>
+                 <Grid key={index} item xs={12} sm={6} md={3} lg={3}>
                     <NewsCard key={index} {...news} sx={{ backgroundColor: '#0A1929' }} />
                  </Grid>
                 ))}

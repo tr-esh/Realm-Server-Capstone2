@@ -5,7 +5,7 @@
     align-items: center;
     display: flex;
     justify-content: center;
-    height: 100vh;
+    height: 100%;
     width: 100vw
 }
 
@@ -46,8 +46,22 @@ h2>span{
     font-family: 'Inter'
 }
 
-@media (max-width: 1200) {
+@media (max-width: 600px) {
     .admin-signin > .container {
         background-color: white; /* Change color to white for small screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-signin {
+        background-color: #001227;
+        height: 100%;
+    }
+}
+
+@media (max-width: 601px) {
+    .admin-signin {
+        background-color: #001227;
+        height: 100vh;
     }
 }

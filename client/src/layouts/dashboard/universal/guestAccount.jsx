@@ -35,11 +35,11 @@ import { Box,
 
             // Access user data from local storage
             const storedUser = JSON.parse(localStorage.getItem('user'));
-            const displayName = storedUser ? storedUser.username : ''; 
-            const userRole = storedUser ? storedUser.role : '';
+            const displayName = 'Guest'; 
+            const userRole = '';
 
             const defaultAccount = {
-              displayName: "Gojo Satoru",
+              displayName: "Guest",
               photoURL: "https://img.freepik.com/free-psd/3d-render-avatar-character_23-2150611722.jpg?t=st=1712842522~exp=1712846122~hmac=144600d5c33e0f1f8763ea42ac7139e3b5f91796e5eb51297a148461592657ba&w=360"
             };
 
