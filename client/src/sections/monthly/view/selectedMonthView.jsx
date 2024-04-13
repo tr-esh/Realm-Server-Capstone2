@@ -51,7 +51,7 @@ export default function SelectedMonthView() {
                 console.log('Filtered data:', filteredData);
     
                 // Update state with the filtered data
-                setMonthlyData(data);
+                setMonthlyData(filteredData);
             } catch (error) {
                 setError('Error fetching monthly data');
                 console.error('Error fetching monthly data:', error);
@@ -62,6 +62,7 @@ export default function SelectedMonthView() {
     
         fetchData();
     }, [stationId, month, year]);
+    
 
     useEffect(() => {
         if (monthlyData.length > 0) { // Ensure monthlyData is available
@@ -107,7 +108,7 @@ export default function SelectedMonthView() {
     
         const wbout = writeXLSX.write(wb, { type: 'binary', bookType: 'xlsx' });
     
-        const fileName = `${monthName.toLowerCase()}_logs.xlsx`;
+        const fileName = `${stationId}_${monthName.toLowerCase()}_logs.xlsx`;
         const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
     
         const link = document.createElement('a');

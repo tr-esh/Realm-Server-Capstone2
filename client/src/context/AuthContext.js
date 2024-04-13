@@ -7,7 +7,7 @@ export const authReducer = (state, action) => {
     case 'LOGIN':
       return { ...state, user: action.payload, selectedRole: action.payload.role || 'Guest' };
     case 'LOGOUT':
-      return { user: null, selectedRole: null };
+      return { user: null, selectedRole: null }; // Reset state to initial values upon logout
     case 'SET_ROLE':
       return { ...state, selectedRole: action.payload };
     default:
@@ -35,7 +35,9 @@ export const AuthContextProvider = ({ children }) => {
     // Save user and selectedRole to localStorage whenever they change
     localStorage.setItem('user', JSON.stringify(state.user));
     localStorage.setItem('selectedRole', JSON.stringify(state.selectedRole));
+  }, [state.user, state.selectedRole]);
 
+  useEffect(() => {
     // Check if the LOGOUT action was dispatched and delete user data from localStorage
     if (state.user === null && state.selectedRole === null) {
       localStorage.removeItem('user');

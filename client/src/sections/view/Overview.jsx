@@ -10,6 +10,7 @@ import AppTimeDisplay from '../appTimeDisplay';
 
 export default function Overview() {
   const [combinedData, setCombinedData] = useState([]);
+  
 
   useEffect(() => {
     fetchDataAndUpdate();
@@ -108,7 +109,7 @@ export default function Overview() {
                        fontWeight: 500, 
                        fontSize: 25, 
                        textTransform: 'uppercase', 
-                       marginLeft: '3rem' }}>
+                        }}>
               Station Activity Logs
             </span>
             <span 
@@ -116,7 +117,7 @@ export default function Overview() {
                      fontFamily: "Poppins", 
                      fontWeight: 300, 
                      fontSize: 13, 
-                     marginLeft: '3rem' }}>
+                      }}>
               Catch up on the activities from the last two weeks
             </span>
           </Grid>

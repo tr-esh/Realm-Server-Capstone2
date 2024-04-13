@@ -83,11 +83,21 @@ const SignUp = () => {
   const [accesskey, setAccessKey] = useState ('')
   const [password, setPassword] = useState('')
   const {signup, error, isLoading} = useSignup()
+  const [roleState, setRoleState] = useState(role);
+
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('selectedRole');
+    if (storedRole) {
+      setRoleState(JSON.parse(storedRole));
+    }
+  }, []);
+  
  
     const handleSubmit = async (e) =>{
        e.preventDefault()
 
-       await signup(role, firstname, middlename, lastname, email, phone, username, accesskey, password)
+       await signup(roleState, firstname, middlename, lastname, email, phone, username, accesskey, password)
   }
    
   const [values, setValues] = React.useState({  
@@ -149,7 +159,7 @@ const SignUp = () => {
                 },
                 readOnly: true,
                }}
-                value={role}
+                value={roleState}
                 autoFocus
                />
            </FormControl>
@@ -422,7 +432,7 @@ const SignUp = () => {
                     }}
                     to={{
                       pathname: '/login',
-                      state: { role: role }, // Pass the role as part of the location state
+                      state: { role: roleState }, // Pass the role as part of the location state
                     }}
                   >
                     LOGIN HERE

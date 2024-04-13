@@ -24,10 +24,10 @@ export default function UserSelect() {
       }
     }
 
-    let destinationPath = '/dashboard';
+    let destinationPath = '/login';
 
     if (role === 'Monitoring-Officer') {
-      destinationPath = '/mo-home';
+      destinationPath = '/login';
     } else if (role === 'Guest') {
       destinationPath = '/guest';
     }
@@ -39,13 +39,22 @@ export default function UserSelect() {
     const handlePopstate = () => {
       localStorage.removeItem('selectedRole');
     };
-
+  
     window.addEventListener('popstate', handlePopstate);
-
+  
+    // Check if there's a previously selected role and clear it
+    const selectedRole = localStorage.getItem('selectedRole');
+    if (selectedRole) {
+      localStorage.removeItem('selectedRole');
+    }
+  
     return () => {
       window.removeEventListener('popstate', handlePopstate);
     };
   }, []);
+  
+
+  
 
   return (
     <div className='user-main'>

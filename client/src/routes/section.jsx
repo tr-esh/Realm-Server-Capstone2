@@ -129,7 +129,7 @@ export default function AppRouter() {
       />
 
       <Route
-        path="/logentries/:stationId/:month"
+        path="/logentries/:stationId/:month/:year"
         element={
           user ? (
             <DashboardLayout>

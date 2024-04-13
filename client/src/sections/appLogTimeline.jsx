@@ -1,11 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
+import { Card, Table, TableHead, TableBody, TableRow, TableCell, Paper, Button } from '@mui/material';
 import { fDateTime } from '../utils/formatTme';
 
 export default function AppLogTimeline({ title, subheader, list, sx, ...other }) {
+
+
+  const buttonStyle = {
+    pointerEvents: 'none',
+    '&:hover': {
+      backgroundColor: 'inherit', // optional: retain original background color on hover
+    },
+  };
+
+  
+
   return (
-    <Card spacing={3} sx={{ px: 4, py: 4, overflowX: 'auto', ...sx }} {...other}>
+    <Card spacing={1} sx={{ px: 1, py: 1, overflowX: 'auto', ...sx }} {...other}>
       <Paper sx={{ borderRadius: '15px', overflow: 'auto', backgroundColor: 'transparent', boxShadow: 'none' }}>
         <Table>
           <TableHead style={{ backgroundColor: '#001227', color: 'white', fontWeight: 600 }}>
@@ -19,22 +30,27 @@ export default function AppLogTimeline({ title, subheader, list, sx, ...other })
           <TableBody>
             {list.map((item, index) => (
               <TableRow key={item.id || index}>
-                <TableCell sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins', fontWeight: '700' }}>{item.stationName}</TableCell>
-                <TableCell sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins' }}>{item.tester}</TableCell>
-                <TableCell sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins' }}>{fDateTime(item.dateAdded)}</TableCell>
-                <TableCell sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins' }}>
-                  <span
-                    style={{
+                <TableCell variant="subtitle2" sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins', fontWeight: '700' }}>{item.stationName}</TableCell>
+                <TableCell variant="subtitle2" sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins' }}>{item.tester}</TableCell>
+                <TableCell variant="subtitle2" sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins' }}>{fDateTime(item.dateAdded)}</TableCell>
+                <TableCell variant="subtitle2" sx={{ borderBottom: '1px solid #03324e', color: '#8cacff', fontFamily: 'Poppins' }}>
+                <Button
+                style={buttonStyle}
+               variant="contained"
+               sx={{
                       backgroundColor: getStatusBackgroundColor(item.status),
                       color: getStatusFontColor(item.status),
                       padding: '0.5rem',
-                      fontWeight: '700',
+                      fontWeight: '600',
                       borderRadius: '3rem',
-                      fontFamily: 'Poppins'
+                      fontFamily: 'Poppins',
+                      lineHeight: 1,
+                      boxShadow: 'none',
+                      fontSize: '0.7rem',
                     }}
                   >
                     {item.status}
-                  </span>
+                </Button>
                 </TableCell>
               </TableRow>
             ))}

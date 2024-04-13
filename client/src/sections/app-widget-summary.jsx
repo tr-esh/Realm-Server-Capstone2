@@ -3,9 +3,10 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import '../components/styles/ImageStyle.css'
+import { useMediaQuery } from '@mui/material';
+import '../components/styles/ImageStyle.css';
 
-export default function AppWidgetSummary({
+function AppWidgetSummary({
   title,
   imageSource,
   icon,
@@ -15,6 +16,8 @@ export default function AppWidgetSummary({
   stationHolder,
   ...other
 }) {
+  const isXsOrSm = useMediaQuery('(max-width:600px)'); // Media query for extra small and small screens
+
   return (
     <Card
       component={Stack}
@@ -42,13 +45,14 @@ export default function AppWidgetSummary({
         )}
       </Stack>
 
-      
+      {!isXsOrSm && ( // Conditionally render the img based on screen size
         <img
           src={imageSource}
           alt="Widget Image"
-          style={{ width: imageSize, height: 'auto', display: 'block' }}
+          style={{ width: imageSize, height: 'auto', display: 'block', marginLeft: '3rem' }}
           className="responsive-image"
         />
+      )}
     </Card>
   );
 }
@@ -62,3 +66,5 @@ AppWidgetSummary.propTypes = {
   stationHolder: PropTypes.node, // Allow any node, including StationCarousel
   total: PropTypes.number,
 };
+
+export default AppWidgetSummary;

@@ -65,15 +65,16 @@ h1>span{
     font-family: 'Archivo', sans-serif;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 600px) {
     .admin-signup {
-        background-image: url('../../img/dark-background.png');
-        background-size: cover;
-        background-repeat: no-repeat;
-        align-items: center;
-        display: flex;
-        justify-content: center;
+        background-color: white;
         height: 100%;
-        width: 100%;
     }
-  }
+}
+
+@media (min-width: 601px) {
+    .admin-signup {
+        background-color: white;
+        height: 100vh;
+    }
+}

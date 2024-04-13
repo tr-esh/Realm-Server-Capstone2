@@ -81,9 +81,12 @@ function SignIn() {
   useEffect(() => {
     const storedRole = localStorage.getItem('selectedRole');
     if (storedRole) {
-      setRoleState(storedRole);
+      setRoleState(JSON.parse(storedRole));
     }
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+  }, []);
+  
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,7 +129,6 @@ function SignIn() {
               }}
               to={{
                 pathname: '/sign-up',
-                state: { role: roleState }, 
               }}
             >
               SIGN UP
@@ -136,36 +138,37 @@ function SignIn() {
         <form className='signup' onSubmit={handleSubmit}>
           {error && <div className='error'>{error}</div>}
           <FormControl fullWidth sx={{ mt: 5, fontFamily: "Popppins" }}>
-            <CssFilledInput
+          <CssFilledInput
               variant="filled"
               label="Role"
-              sx={{ fontFamily: "Archivo", marginBottom: 1 }}
+              sx={{ fontFamily: "Poppins", marginBottom: 1 }}
               InputLabelProps={{
                 style: {
-                  fontFamily: "Archivo",
+                  fontFamily: "Poppins",
                   paddingLeft: "13px",
                   paddingTop: "4px",
                   paddingBottom: "15px",
+                 
                 },
               }}
               InputProps={{
                 style: {
-                  fontFamily: "Archivo",
+                  fontFamily: "Poppins",
                   fontSize: "0.9rem",
                 },
                 readOnly: true,
               }}
-              value={role}
+              value={roleState} // Use roleState here instead of role
               autoFocus
             />
 
             <CssFilledInput
               variant="filled"
               label="Username"
-              sx={{ fontFamily: "Archivo", marginBottom: 1 }}
+              sx={{ fontFamily: "Poppins", marginBottom: 1 }}
               InputLabelProps={{
                 style: {
-                  fontFamily: "Archivo",
+                  fontFamily: "Poppins",
                   paddingLeft: "13px",
                   paddingTop: "4px",
                   paddingBottom: "15px"
@@ -173,7 +176,7 @@ function SignIn() {
               }}
               InputProps={{
                 style: {
-                  fontFamily: "Archivo",
+                  fontFamily: "Poppins",
                   fontSize: "0.9rem"
                 }
               }}
@@ -188,7 +191,7 @@ function SignIn() {
                     variant="filled"
                     InputLabelProps={{
                       style: {
-                        fontFamily: "Archivo",
+                        fontFamily: "Poppins",
                         paddingLeft: "13px",
                         paddingTop: "4px",
                         paddingBottom: "15px"
@@ -196,7 +199,7 @@ function SignIn() {
                     }}
                     inputProps={{ 
                       style:{
-                        fontFamily: "Archivo",
+                        fontFamily: "Poppins",
                         fontSize: "0.9rem"
                       }
                     }}
@@ -226,7 +229,7 @@ function SignIn() {
                 type="submit"
                 disabled={isLoading}
                               sx={ { 
-                              fontFamily: "Archivo",
+                              fontFamily: "Poppins",
                               fontSize: '0.9rem', 
                               borderRadius: 4, 
                               height:'6ch', 

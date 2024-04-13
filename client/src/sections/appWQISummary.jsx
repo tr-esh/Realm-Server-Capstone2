@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Label } from 'recharts'; // Import Label from 'recharts'
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -113,7 +113,7 @@ export default function AppWQISummary({ title, subheader, chart, sx, ...other })
                             fontFamily: "Poppins", 
                             fontWeight: 100,
                             fontSize: 13,
-                            lineHeight: 0.8,
+                            lineHeight: 0.9,
                             }}
             >
             {subheader} 
@@ -134,21 +134,27 @@ export default function AppWQISummary({ title, subheader, chart, sx, ...other })
               vertical={false}
               stroke="rgba(100, 100, 100, 0.7)"
             />
-             <XAxis
-               dataKey="label"
-               type="category"
+            <XAxis
+              dataKey="label"
+              type="category"
               tick={{ fontSize: 10, fontFamily: "Poppins", fill: '#ffff', fontWeight: '300' }}
               axisLine={false}
               tickLine={false}
               width={30} // Adjust the width as needed
-            />
+            >
+              {/* Add X-axis title */}
+              <Label value="Recorded Stations" offset={-8} position="bottom" style={{ fontSize: 12, fontFamily: "Poppins", fill: '#8cacff', fontWeight: '700' }} />
+            </XAxis>
             <YAxis // YAxis becomes horizontal
               dataKey="value"
               tick={{ fontSize: 10, fontFamily: "Poppins", fill: '#ffff', fontWeight: '300' }}
               axisLine={false}
               tickLine={false}
               interval={0}
-            />
+            >
+              {/* Add Y-axis title */}
+              <Label value="WQI Values" angle={-90} position="insideLeft" style={{ fontSize: 12, fontFamily: "Poppins", fill: '#8cacff', fontWeight: '700' }} />
+            </YAxis>
             <Tooltip
               cursor={{ fill: 'transparent' }}
               contentStyle={{
@@ -172,11 +178,11 @@ export default function AppWQISummary({ title, subheader, chart, sx, ...other })
       </Box>
 
       {/* Legend */}
-      <Box mt={2}>
+      <Box mt={5}>
         <Grid container justifyContent="center" spacing={0.8}>
           {legendData.map((item, index) => (
-            <Grid item xs={4} sm={4} md={4} lg={2.5} key={index}>
-              <Button variant="contained" sx={{ borderRadius: 20, fontSize: 5, padding: '5px 10px', backgroundColor: '#0d2135', boxShadow: 'none' }}>
+            <Grid item xs={2.5} sm={2.5} md={2.5} lg={1.9} key={index}>
+              <Button variant="contained" sx={{ borderRadius: 20, fontSize: 3, padding: '5px 5px', backgroundColor: '#0d2135', boxShadow: 'none' }}>
                 <div style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: '50%', marginRight: 5 }}></div>
                 <Typography variant="body2" style={{ fontSize: 10, fontFamily: 'Poppins' }}>{item.label}</Typography>
               </Button>

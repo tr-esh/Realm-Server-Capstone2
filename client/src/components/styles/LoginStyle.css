@@ -14,7 +14,7 @@
     
     background-color:  white;
     backdrop-filter: blur(9.5px);
-    border-radius: 35px;
+    border-radius: 25px;
     color: #263238;
     max-height: 100%;
     padding: 50px;
@@ -57,7 +57,7 @@ h2>span{
     }
 }
 
-@media (max-width: 601px) {
+@media (min-width: 601px) {
     .admin-signin {
         background-color: white;
         height: 100vh;

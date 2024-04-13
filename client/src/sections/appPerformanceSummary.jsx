@@ -126,7 +126,12 @@ const fetchData = async () => {
                 ticks={yAxisTicks}
                 interval="preserveStartEnd" 
               />
-              <CartesianGrid horizontal={true} vertical={false} />
+              <CartesianGrid
+              strokeDasharray="1 0"
+              horizontal={true}
+              vertical={false}
+              stroke="rgba(100, 100, 100, 0.7)"
+            />
               <Tooltip
                 cursor={{ fill: 'transparent' }}
                 contentStyle={{
@@ -153,7 +158,7 @@ const fetchData = async () => {
             </AreaChart>
           </ResponsiveContainer>
         )}
-        <Box mt={1} mb={2} sx={{ mx: 1 }}>
+        <Box mt={3} mb={2} sx={{ mx: 1 }}>
           {bestStationInfo && (
             <Typography variant="subheader" 
                         style={{ marginTop: '1rem', 

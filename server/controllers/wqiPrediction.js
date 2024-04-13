@@ -28,7 +28,7 @@ const ensureModelDirectoryExists = (modelPath) => {
 };
 
 const modelSaveBasePath = path.join(__dirname, 'models', 'wqiModels');
-const sequenceLength = 3;
+const sequenceLength = 4;
 
 // KalmanFilter initialization and training
 async function kalmanFilter(inputData) {
@@ -92,74 +92,120 @@ const preprocessDataForLSTM = async () => {
       }
     ]);
 
-    // Apply Kalman filter to each set of WQI values for each station
-    const filteredData = await Promise.all(data.map(async stationData => {
-      const { stationId, data: stationDataArray } = stationData;
-      const wqiValues = stationDataArray.map(item => item.wqi);
-      const filteredWQIValues = await kalmanFilter(wqiValues);
-      const filteredStationData = stationDataArray.map((item, index) => ({
-        ...item,
-        wqi: filteredWQIValues[index]
-      }));
-      return { stationId, data: filteredStationData };
+    data.forEach(stationData => {
+      stationData.data.forEach(item => {
+        if (isNaN(item.wqi)) {
+          throw new Error(`Invalid WQI value for station ${stationData.stationId}`);
+        }
+      });
+    });
+
+    // No filtering applied, proceed with raw data
+    const unfilteredData = data.map(stationData => ({
+      stationId: stationData.stationId,
+      data: stationData.data
     }));
 
-    return filteredData;
+    return unfilteredData;
   } catch (error) {
     console.error('Error processing data for LSTM:', error);
     return [];
   }
 };
 
+
 const trainModelForStation = async (stationId, data) => {
-  const modelSavePath = path.join(modelSaveBasePath, `station_${stationId}`);
-  ensureModelDirectoryExists(modelSavePath);
+  try {
+    // Ensure data is an array and has at least `sequenceLength` elements
+    if (!Array.isArray(data) || data.length < sequenceLength) {
+      throw new Error(`Invalid data structure for station ${stationId}`);
+    }
 
-  let model;
-  if (fs.existsSync(path.join(modelSavePath, 'model.json'))) {
-    model = await tf.loadLayersModel(`file://${path.join(modelSavePath, 'model.json')}`);
-  } else {
-    model = defineModel();
+    // Log the input data to inspect its structure
+    console.log(`Input data for station ${stationId}:`, data);
+
+    // Extract the 'wqi' values from data for training
+    const wqiValues = data.map(item => item.wqi);
+
+    // Check if there are any NaN or undefined values in 'wqiValues'
+    if (wqiValues.some(value => isNaN(value) || value === undefined)) {
+      throw new Error(`Invalid WQI values for station ${stationId}`);
+    }
+
+    // Proceed with model preparation and training
+    const modelSavePath = path.join(modelSaveBasePath, `station_${stationId}`);
+    ensureModelDirectoryExists(modelSavePath);
+
+    let model;
+    if (fs.existsSync(path.join(modelSavePath, 'model.json'))) {
+      model = await tf.loadLayersModel(`file://${path.join(modelSavePath, 'model.json')}`);
+    } else {
+      model = defineModel();
+    }
+
+    model.compile({ loss: 'meanSquaredError', optimizer: 'adam' });
+
+    let sequences = [];
+    let labels = [];
+    for (let i = 0; i < data.length - sequenceLength; i++) {
+      sequences.push(data.slice(i, i + sequenceLength).map(item => [item.wqi]));
+      labels.push(data[i + sequenceLength].wqi);
+    }
+
+    const xs = tf.tensor3d(sequences);
+    const ys = tf.tensor2d(labels, [labels.length, 1]);
+
+    console.log('Input data shape (xs):', xs.shape);
+
+    await model.fit(xs, ys, {
+      batchSize: 32,
+      epochs: 100,
+      callbacks: {
+        onEpochEnd: (epoch, logs) => {
+          console.log(`Epoch ${epoch + 1} - Loss: ${logs.loss}`);
+        }
+      }
+    });
+
+    await model.save(`file://${modelSavePath}`);
+    console.log(`Model for station ${stationId} saved.`);
+
+  } catch (error) {
+    console.error(`Error training model for station ${stationId}:`, error);
   }
-
-  model.compile({ loss: 'meanSquaredError', optimizer: 'rmsprop' });
-
-  let sequences = [];
-  let labels = [];
-  for (let i = 0; i < data.length - sequenceLength; i++) {
-    sequences.push(data.slice(i, i + sequenceLength).map(item => [item.wqi]));
-    labels.push(data[i + sequenceLength].wqi);
-  }
-
-  const xs = tf.tensor3d(sequences);
-  const ys = tf.tensor2d(labels, [labels.length, 1]);
-
-  console.log('Input data shape (xs):', xs.shape);
-
-  await model.fit(xs, ys, {
-    batchSize: 32,
-    epochs: 100
-  });
-
-  await model.save(`file://${modelSavePath}`);
-  console.log(`Model for station ${stationId} saved.`);
 };
 
 //data training
 const preprocessAndTrainModels = async () => {
-  const data = await preprocessDataForLSTM();
-  for (const stationData of data) {
-    const { stationId, data: stationDataArray } = stationData;
-    await trainModelForStation(stationId, stationDataArray);
+  try {
+    const data = await preprocessDataForLSTM();
+    const totalStations = data.length;
+    let stationsProcessed = 0;
+
+    for (const stationData of data) {
+      const { stationId, data: stationDataArray } = stationData;
+      await trainModelForStation(stationId, stationDataArray);
+      stationsProcessed++;
+
+      if (stationsProcessed === totalStations) {
+        console.log('All station models trained.');
+        process.exit(0); // Exit the script
+      }
+    }
+  } catch (error) {
+    console.error('Error during preprocessing and training:', error);
+    process.exit(1); // Exit with error status
   }
 };
+
+// preprocessAndTrainModels();
 
 const defineModel = () => {
   const model = tf.sequential();
   model.add(tf.layers.lstm({ units: 128, returnSequences: true, inputShape: [sequenceLength, 1] }));
   model.add(tf.layers.lstm({ units: 64, returnSequences: true }));
   model.add(tf.layers.lstm({ units: 32, returnSequences: false }));
-  model.add(tf.layers.dense({ units: 5 }));
+  model.add(tf.layers.dense({ units: 1 }));
 
   return model;
 };
@@ -170,7 +216,7 @@ const loadModelForStation = async (stationId) => {
   const modelSavePath = path.join(modelSaveBasePath, `station_${stationId}`);
   if (fs.existsSync(path.join(modelSavePath, 'model.json'))) {
     const model = await tf.loadLayersModel(`file://${path.join(modelSavePath, 'model.json')}`);
-    model.compile({ loss: 'meanSquaredError', optimizer: 'rmsprop' });
+    model.compile({ loss: 'meanSquaredError', optimizer: 'adam' });
     return model;
   } else {
     throw new Error(`Model for station ${stationId} not found.`);
@@ -206,6 +252,7 @@ const predictNext5DaysWQIForStation = async (stationId, data) => {
 
       // Predict WQI values using the model
       const predictedValues = model.predict(xs);
+      console.log("Predicted Values:", predictedValues.dataSync());
       const predictedValue = Array.from(predictedValues.dataSync())[0]; // Assuming single prediction per day
 
       // Add the predicted value to the predictions array
@@ -299,6 +346,7 @@ const scheduleModelProcessingAndPrediction = () => {
   });
 };
 
+// Connect to the database
 connectDB().catch(err => console.error('Error connecting to database:', err));
 
 module.exports = {

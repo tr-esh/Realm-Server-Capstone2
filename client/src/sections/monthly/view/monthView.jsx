@@ -129,7 +129,7 @@ export default function MonthView() {
             <Grid item key={index} xs={12} sm={12} md={6} lg={4}>
               {monthData.dataCount > 0 ? (
                 <Link
-                to={`/logentries/${selectedStation?.value}/${monthData.monthName}`}
+                to={`/logentries/${selectedStation?.value}/${monthData.monthName}/${selectedYear.value}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
                   <MonthlyCard
