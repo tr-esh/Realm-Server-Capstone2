@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const deletedStationSchema = new Schema({
-    stationName: { type: String, required: true, unique: true },
+    stationName: { type: String, required: true },
     tester: { type: String, required: true },
     siteLocation: { type: String, required: true },
     address: { type: String, required: true },

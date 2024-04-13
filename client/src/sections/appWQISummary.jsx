@@ -182,8 +182,8 @@ export default function AppWQISummary({ title, subheader, chart, sx, ...other })
         <Grid container justifyContent="center" spacing={0.8}>
           {legendData.map((item, index) => (
             <Grid item xs={2.5} sm={2.5} md={2.5} lg={1.9} key={index}>
-              <Button variant="contained" sx={{ borderRadius: 20, fontSize: 3, padding: '5px 5px', backgroundColor: '#0d2135', boxShadow: 'none' }}>
-                <div style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: '50%', marginRight: 5 }}></div>
+              <Button variant="contained" sx={{ borderRadius: 20, fontSize: 3, padding: '5px 8px', backgroundColor: '#0d2135', boxShadow: 'none' }}>
+                <div style={{ width: 8, height: 8, backgroundColor: item.color, borderRadius: '50%', marginRight: 5 }}></div>
                 <Typography variant="body2" style={{ fontSize: 10, fontFamily: 'Poppins' }}>{item.label}</Typography>
               </Button>
             </Grid>

@@ -227,7 +227,7 @@ const deleteStation = async (req, res) => {
     await moveParameterData(PhReading, stationId);
 
     // Now remove the station from the Station collection
-    await Station.findOneAndDelete({ stationName: decodedStationId });
+    await Station.deleteOne({ stationName: decodedStationId });
 
     res.json({ message: 'Station and its parameter data deleted successfully' });
   } catch (error) {
@@ -325,25 +325,24 @@ const restoreParameterData = async (ParameterModel, stationId) => {
 // Function to delete a station form sub DB
 const deleteStationPermanently = async (req, res) => {
   try {
-      const { stationName } = req.params; 
+    const { stationId } = req.params;
 
-      // Find the pending station request by ID
-      const deletedStation = await DeletedStation.findOne({ stationName: stationName });
+    // Find the deleted station document in the DeletedStation collection by _id
+    const deletedStation = await DeletedStation.findById(stationId);
 
-      // If the pending station request is not found, return an error
-      if (!deletedStation) {
-          return res.status(404).json({ error: 'Pending station request not found' });
-      }
+    // If the deleted station document is not found, return an error
+    if (!deletedStation) {
+      return res.status(404).json({ error: 'Deleted station not found' });
+    }
 
-      // Delete the pending station request from the pending collection
-      await deletedStation.remove();
+    // Delete the found deleted station document
+    await deletedStation.remove();
 
-      // Respond with success message
-      res.status(200).json({ message: 'Request denied successfully' });
-
+    // Respond with success message
+    res.status(200).json({ message: 'Deleted station removed successfully' });
   } catch (error) {
-      console.error('Error deleting pending station request:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error deleting deleted station:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
