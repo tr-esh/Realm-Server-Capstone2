@@ -53,6 +53,12 @@ export default function StationView() {
       };
 
       fetchStations();
+
+      // Set up interval to fetch stations periodically (every 5 seconds in this example)
+      const intervalId = setInterval(fetchStations, 5000);
+  
+      // Clean up interval on component unmount
+      return () => clearInterval(intervalId);
     }, []); 
 
     useEffect(() => {

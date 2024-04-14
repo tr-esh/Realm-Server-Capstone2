@@ -60,8 +60,7 @@ export default function GuestView() {
         suggestionImages: [drinkWater, monitorWater],
         suggestionSubheader: [
             'Water that is suitable for drinking.',
-            'Continue monitoring the water quality.',
-            ''
+            'Continue monitoring the water quality.'
         ]
     },
     'Fair': {
@@ -92,8 +91,6 @@ export default function GuestView() {
         suggestionImages: [], // No images for unknown status
         suggestionSubheader: [
             'Unknown status',
-            '', // Add empty strings for unused lines
-            '' // Add empty strings for unused lines
         ]
     }
 };

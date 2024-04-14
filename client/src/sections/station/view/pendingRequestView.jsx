@@ -28,7 +28,7 @@ export default function PendingRequestView({ title, subtitle, icon, color = 'pri
     const [totalCount, setTotalCount] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
-    const [confirmationOpen, setConfirmationOpen] = useState(false); // state for confirmation dialog
+    const [confirmationOpen, setConfirmationOpen] = useState(false);
 
 
      useEffect(() => {
@@ -45,6 +45,12 @@ export default function PendingRequestView({ title, subtitle, icon, color = 'pri
         };
 
         fetchData();
+
+        // Set up interval for polling
+        const intervalId = setInterval(fetchData, 5000);
+
+        // Clean up interval on component unmount
+        return () => clearInterval(intervalId);
     }, []); // Run only once on component mount
 
     const handleModalOpen = (request) => {

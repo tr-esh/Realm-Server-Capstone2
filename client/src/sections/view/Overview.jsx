@@ -14,6 +14,12 @@ export default function Overview() {
 
   useEffect(() => {
     fetchDataAndUpdate();
+
+    // Set up polling to fetch data at regular intervals (e.g., every 5 seconds)
+    const intervalId = setInterval(fetchDataAndUpdate, 5000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
   const fetchDataAndUpdate = async () => {

@@ -106,6 +106,11 @@ export default function ViewPerStation () {
         };
     
         fetchParameterData();
+
+        // Setup interval to fetch data periodically (every 5 seconds in this example)
+        const intervalId = setInterval(fetchParameterData, 5000);
+    
+        return () => clearInterval(intervalId);
     }, [selectedStation]);
 
     let lastUserId;
