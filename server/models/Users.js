@@ -22,11 +22,12 @@ const UserSchema = new mongoose.Schema({
     email:{
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
-    phone: {
+    phone:{
         type: String,
         required: true,
+        unique: true,
     },
     username:{
         type: String,

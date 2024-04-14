@@ -218,7 +218,7 @@ export default function StationSectionView() {
               {chartData.length > 0 ? (
                   <StationRecordedWQI
                     title="WQI TRENDS OVER THE MONTH"
-                    subheader="(+43%) status quality than last month" 
+                    subheader="Summary of Water Quality Index (WQI) trends for the month" 
                       chart={{
                         series: wqiTrends,
                       }}
@@ -246,7 +246,7 @@ export default function StationSectionView() {
               {chartData.length > 0 ? (
                   <StationPredictedWQI
                     title="PREDICTED WQI"
-                    subheader="for the next month" 
+                    subheader="for the next few days" 
                     chart={{
                       series: chartData,
                     }}
