@@ -62,7 +62,7 @@ const fetchData = async () => {
     }
   }
 
-  const subheaderText = bestStationInfo ? `${bestStationInfo.stationId} has the lowest WQI` : '';
+  const subheaderText = bestStationInfo ? `At ${bestStationInfo.stationId} the Water Quality Index (WQI) has the optimal water index results` : '';
   const yAxisTicks = [0, 20, 40, 60, 80];
 
   return (
@@ -158,15 +158,14 @@ const fetchData = async () => {
             </AreaChart>
           </ResponsiveContainer>
         )}
-        <Box mt={3} mb={2} sx={{ mx: 1 }}>
+        <Box mt={5} mb={3} sx={{ mx: 1 }}>
           {bestStationInfo && (
             <Typography variant="subheader" 
                         style={{ marginTop: '1rem', 
                         color: 'white', fontSize: 
                         13, fontWeight: '300', 
                         fontFamily: "Poppins" }}>
-              According to the collected water quality data, the 
-              "<strong>{bestStationInfo.stationId}</strong>" exhibits the
+              The "<strong>{bestStationInfo.stationId}</strong>" exhibits the
                lowest WQI readings compared to all other stations,
               indicating a better water quality at this specific location.
 

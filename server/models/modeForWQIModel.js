@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
 
-const ModeValuesSchema = new Schema({
+const ModeValuesWQISchema = new Schema({
     station_id: {
         type: String,
         required: true,
@@ -21,4 +21,4 @@ const ModeValuesSchema = new Schema({
     },
 }, { timestamps: true });
 
-module.exports = mongoose.model('mode_value', ModeValuesSchema)
+module.exports = mongoose.model('modeWQI_value', ModeValuesWQISchema)

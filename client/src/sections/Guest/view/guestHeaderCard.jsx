@@ -1,59 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, Stack, Typography, Box, CircularProgress } from '@mui/material';
 
-export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx, ...other }) {
-  const [loading, setLoading] = useState(true);
-  const [optimalStation, setOptimalStation] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/realm/lowWQI'); // Updated endpoint
-        const data = await response.json();
-
-        const { maxLowWQIStation, wqiValuesOfIdentifiedStation } = data;
-
-        // Find the latest WQI value
-        const latestWQI = wqiValuesOfIdentifiedStation[wqiValuesOfIdentifiedStation.length - 1];
-
-        // Determine status based on value
-        const getStatus = (value) => {
-          if (value >= 0 && value <= 25) return 'Excellent';
-          if (value > 25 && value <= 50) return 'Good';
-          if (value > 50 && value <= 75) return 'Fair';
-          if (value > 75 && value <= 100) return 'Poor';
-          if (value > 100 && value <= 150) return 'Very Poor';
-          return 'Unknown';
-        };
-
-        const optimalStationData = {
-          stationId: maxLowWQIStation,
-          wqi: latestWQI,
-          status: getStatus(latestWQI),
-          color: getBarColor(latestWQI)
-        };
-
-        setOptimalStation(optimalStationData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  // Function to get color based on value
-  const getBarColor = (value) => {
-    if (value >= 0 && value <= 25) return '#A1E6A6'; // Green
-    if (value > 25 && value <= 50) return '#FFFF80'; // Faded Green
-    if (value > 50 && value <= 75) return '#EEFF51'; // Almost Yellow
-    if (value > 75 && value <= 100) return '#F5B748'; // Almost Orange
-    if (value > 100 && value <= 150) return '#FF6551'; // Red
-    return '#8CACFF'; // Default color
-  };
+export default function GuestHeaderCard({ title, info, subtitle, progress, color = 'primary', sx, ...other }) {
+  
 
   return (
     <Card
@@ -70,9 +20,8 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
       }}
       {...other}
     >
-      {loading ? (
-        <CircularProgress />
-      ) : optimalStation ? (
+      {/* Conditional rendering based on progress */}
+      {progress !== null ? (
         <>
           {/* Render Circular Progress */}
           <Card sx={{ bgcolor: '#03182f', borderTopLeftRadius: 15, borderTopRightRadius: 15, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none'}}>
@@ -85,13 +34,13 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                paddingTop: '4rem',
-                paddingBottom: '4rem'
+                paddingTop: { xs: '2rem', sm: '4rem' }, // Adjusted padding based on screen size
+                paddingBottom: { xs: '2rem', sm: '4rem' }, // Adjusted padding based on screen size
               }}
             >
               <CircularProgress
                 variant="determinate"
-                value={optimalStation.wqi}
+                value={progress}
                 size={200}
                 thickness={5} // Adjust the thickness as needed
                 sx={{
@@ -99,7 +48,7 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
                   height: '100%',
                   borderRadius: '80%',
                   position: 'relative',
-                  color: optimalStation.color,
+                  color: color, // Changed from optimalStation.color to color
                   zIndex: 2,
                 }}
               />
@@ -122,21 +71,22 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
                 variant="h4"
                 sx={{
                   fontSize: 24,
-                  fontFamily: "Archivo, 'sans-serif'",
+                  fontFamily: "Poppins",
                   fontWeight: '700',
-                  color: optimalStation.color,
+                  color: color, // Changed from optimalStation.color to color
                   position: 'absolute',
                   zIndex: 3,
                 }}
               >
-              {optimalStation.wqi.toFixed(2)}% {/* Display WQI value with two decimals */}
+                {progress}%
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: 13,
-                    fontFamily: "Archivo, 'sans-serif'",
+                    fontFamily: "Poppins",
                     fontWeight: '300',
-                    color: optimalStation.color, textAlign: 'center'
+                    color: color, // Changed from optimalStation.color to color
+                    textAlign: 'center'
                   }}
                 >
                   WQI
@@ -150,26 +100,28 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
           <Card 
              sx={{ bgcolor: '#001227', 
              borderBottomLeftRadius: 15, 
-             borderBottomRightRadius: 15,  borderTopLeftRadius: 0, borderTopRightRadius: 0,
+             borderBottomRightRadius: 15,  
+             borderTopLeftRadius: 0, 
+             borderTopRightRadius: 0,
              boxShadow: 'none'
              }}>
             <Stack
               sx={{
                 padding: '20px',
                 display: 'flex', 
-             alignItems: 'center',
-             justifyContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <Typography
                 variant="h4"
                 sx={{
                   fontSize: 13,
-                  fontFamily: "Archivo, 'sans-serif'",
+                  fontFamily: "Poppins",
                   fontWeight: '700',
-                  color: '#1a56bb',
+                  color: color, // Changed from optimalStation.color to color
                   textTransform: 'uppercase',
-                  backgroundColor: '#051e68',
+                  backgroundColor: '#03182f',
                   width: '14rem', 
                   height: '1.7rem',
                   display: 'flex',
@@ -177,7 +129,7 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
                   textAlign: 'center',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginTop: '2rem',
+                  marginTop: { xs: '1rem', sm: '2rem' },
                 }}
               >
                 {title}
@@ -188,12 +140,12 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
                   fontSize: 25,
                   fontFamily: "Poppins",
                   fontWeight: '700',
-                  color: optimalStation.color,
+                  color: color, // Changed from optimalStation.color to color
                   textTransform: 'uppercase',
                   marginTop: '1rem',
                 }}
               >
-                {optimalStation.stationId} {/* Display optimal station name */}
+                {info}
               </Typography>
               
 
@@ -206,11 +158,11 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
                   fontWeight: '300',
                   color: 'white',
                   textAlign: 'center',
-                  paddingTop: '2rem',
-                  paddingBottom: '2.5rem',
+                  paddingTop: { xs: '0.5rem', sm: '2.5rem' },
+                  paddingBottom: { xs: '0.5rem', sm: '2.5rem' },
                 }}
               >
-                Based on the gathered station data, the optimal water source is the <strong> {optimalStation.stationId} </strong> with a value of <strong>{optimalStation.wqi.toFixed(2)} </strong>interpreted as <strong>{optimalStation.status}.</strong>
+                {subtitle}
               </Typography>
 
             </Stack>
@@ -223,8 +175,12 @@ export default function GuestHeaderCard({ title, subtitle, color = 'primary', sx
   );
 }
 
+
 GuestHeaderCard.propTypes = {
   color: PropTypes.string,
   sx: PropTypes.object,
   title: PropTypes.string.isRequired,
+  info: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired,
+  progress: PropTypes.number, // Progress value for the CircularProgress can be null
 };

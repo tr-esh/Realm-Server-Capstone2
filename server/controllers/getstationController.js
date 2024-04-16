@@ -25,24 +25,28 @@ const getStationProvider = async (req, res) => {
     // Fetch all WQI values
     const wqiValues = await WQIValues.find();
 
-    // Create a map for faster lookup of status by stationId
+    // Create a map for faster lookup of status and WQI values by stationId
     const statusMap = {};
+    const wqiMap = {};
     wqiValues.forEach(wqiValue => {
       statusMap[wqiValue.stationId] = wqiValue.status;
+      wqiMap[wqiValue.stationId] = wqiValue.wqi; // Assuming there's a wqi property
     });
 
-    // Iterate through each station and add status if available
-    const stationsWithStatus = stations.map(station => {
+    // Iterate through each station and add status and wqi if available
+    const stationsWithStatusAndWQI = stations.map(station => {
       const status = statusMap[station.stationName];
-      return { ...station.toObject(), status }; 
+      const wqi = wqiMap[station.stationName];
+      return { ...station.toObject(), status, wqi }; 
     });
 
-    // Send the modified stations array with status added
-    res.json(stationsWithStatus);
+    // Send the modified stations array with status and wqi added
+    res.json(stationsWithStatusAndWQI);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
+
 };
 
 // Function to get a specific station by ID

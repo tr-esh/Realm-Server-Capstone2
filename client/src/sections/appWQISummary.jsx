@@ -21,41 +21,44 @@ export default function AppWQISummary({ title, subheader, chart, sx, ...other })
           throw new Error('Failed to fetch data');
         }
         const data = await response.json();
-
+  
         // Initialize an empty array to store the latest data for each station
         const newData = [];
-
+  
         // Iterate over each station
         Object.keys(data).forEach(stationId => {
           // Find the entry with the latest date
           const latestDate = Object.keys(data[stationId]).reduce((prev, current) => {
             return (new Date(current) > new Date(prev)) ? current : prev;
           });
-
+  
           // Get the latest entry for the station
           const latestEntry = data[stationId][latestDate];
-
+  
           // Add the latest entry to the newData array
           newData.push({
             stationId,
             ...latestEntry
           });
         });
-
+  
         setStationData(newData);
-
+  
         // Find the station with the lowest and highest WQI values
         const lowest = newData.reduce((prev, current) => (prev.wqi < current.wqi) ? prev : current);
         const highest = newData.reduce((prev, current) => (prev.wqi > current.wqi) ? prev : current);
-        setLowestStation(lowest);
-        setHighestStation(highest);
+        setLowestStation({ ...lowest, date: Object.keys(data[lowest.stationId]).reduce((prev, current) => (new Date(current) > new Date(prev)) ? current : prev) });
+        setHighestStation({ ...highest, date: new Date(Object.keys(data[highest.stationId]).reduce((prev, current) => (new Date(current) > new Date(prev)) ? current : prev)).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) });
       } catch (error) {
         console.error('Error fetching station data:', error);
       }
     }
-
+  
     fetchData();
   }, []);
+  
+  
+  
 
   // Function to determine color based on WQI value
   const getColor = (value) => {
@@ -109,18 +112,19 @@ export default function AppWQISummary({ title, subheader, chart, sx, ...other })
         }
         subheader={
           <Typography variant="subtitle1" 
-                    style={{ color: '#8cacff', 
-                            fontFamily: "Poppins", 
-                            fontWeight: 100,
-                            fontSize: 13,
-                            lineHeight: 0.9,
-                            }}
+                      style={{ color: '#8cacff', 
+                              fontFamily: "Poppins", 
+                              fontWeight: 100,
+                              fontSize: 13,
+                              lineHeight: 1,
+                              }}
             >
-            {subheader} 
-            {lowestStation && highestStation && 
-              `Based on the latest readings of the stations the optimal water source is ${lowestStation.stationId}, and the station with less desirable quality is ${highestStation.stationId}`}
+            The gathered data are summarized here with active stations being monitored. {lowestStation && highestStation && 
+              <>According to the readings, the <span style={{fontWeight: 'bold'}}>{lowestStation.stationId}</span> results have the best quality among all stations, while <span style={{fontWeight: 'bold'}}>{highestStation.stationId}</span> has the poorest quality as of <span style={{fontWeight: 'bold'}}>{highestStation.date}</span>.</>}
           </Typography>
         }
+        
+        
       />
 
       <Box mt={2} sx={{ mx: 1 }}>
@@ -200,3 +204,4 @@ AppWQISummary.propTypes = {
   title: PropTypes.string,
   sx: PropTypes.object,
 };
+

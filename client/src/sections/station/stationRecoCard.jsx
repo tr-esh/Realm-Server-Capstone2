@@ -4,6 +4,7 @@ import {
   Card,
   Stack,
   Typography,
+  Button,
 } from '@mui/material';
 
 export default function StationRecoCard({
@@ -29,11 +30,25 @@ export default function StationRecoCard({
         justifyContent="center" // Center stacks horizontally
         spacing={2}
       >
-        <img
-          src={suggestionImageSrc}
-          alt="Suggestion Image"
-          style={{ width: '33%', maxWidth: '100%', marginBottom: '2rem' }} // Adjust size as needed
-        />
+        {/* Image Button */}
+        <Button
+          variant="outlined"
+          sx={{
+            p: 0, // Remove padding
+            borderColor: '#8cacff', // Border color
+            width: '4rem', // Set width
+            height: '4rem', // Set height to create a box shape
+            '&:hover': {
+              borderColor: '#6b8cff', // Hover border color
+            },
+          }}
+        >
+          <img
+            src={suggestionImageSrc}
+            alt="Suggestion Image"
+            style={{ width: '60%', height: '60%' }} // Set image size to fill the button
+          />
+        </Button>
         {/* Suggestion Subheader */}
         <Stack direction="column" alignItems="center">
           <Typography

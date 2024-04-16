@@ -130,7 +130,7 @@ export default function StationSectionView() {
           setStationDetails({
             ...stationDetails,
             info: latestEntry.status,
-            subtitle: ` ${stationId} is interpreted as ${latestEntry.status} with a WQI result ${latestEntry.wqi.toFixed(2)} ${changeType} by ${Math.abs(percentageChange).toFixed(2)}% since ${new Date(latestEntry.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`,
+            subtitle: ` ${stationId} is interpreted as ${latestEntry.status} with a Water Quality Index result ${latestEntry.wqi.toFixed(2)} ${changeType} by ${Math.abs(percentageChange).toFixed(2)}% since ${new Date(latestEntry.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`,
             progress: parseFloat(latestEntry.wqi.toFixed(2))
           });
         } else {
@@ -222,7 +222,7 @@ export default function StationSectionView() {
                       chart={{
                         series: wqiTrends,
                       }}
-                    sx={{
+                    sx={{ 
                       backgroundColor: '#10273d'
                     }}
                   />

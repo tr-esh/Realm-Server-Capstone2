@@ -3,6 +3,17 @@ import PropTypes from 'prop-types';
 import { Grid, Stack, Typography, Box, CircularProgress } from '@mui/material';
 
 export default function StationHeaderCard({ title, info, subtitle, progress, color = 'primary', sx, ...other }) {
+  const getBarColor = (value) => {
+    if (value >= 0 && value <= 25) return '#A1E6A6'; // Green
+    if (value > 25 && value <= 50) return '#FFFF80'; // Faded Green
+    if (value > 50 && value <= 75) return '#EEFF51'; // Almost Yellow
+    if (value > 75 && value <= 100) return '#F5B748'; // Almost Orange
+    if (value > 100 && value <= 150) return '#FF6551'; // Red
+    return '#8CACFF'; // Default color
+  };
+
+  const barColor = getBarColor(progress);
+
   const renderProgress = (
     <Grid
       item
@@ -35,7 +46,7 @@ export default function StationHeaderCard({ title, info, subtitle, progress, col
             height: '100%',
             borderRadius: '80%',
             position: 'relative',
-            color: '#8cacff',
+            color: barColor, // Use the calculated bar color here
             zIndex: 2,
           }}
         />
@@ -58,7 +69,7 @@ export default function StationHeaderCard({ title, info, subtitle, progress, col
             fontSize: 24,
             fontFamily: "Archivo, 'sans-serif'",
             fontWeight: '700',
-            color: '#8CACFF',
+            color: barColor,
             position: 'absolute',
             zIndex: 3,
           }}
@@ -70,7 +81,7 @@ export default function StationHeaderCard({ title, info, subtitle, progress, col
               fontSize: 13,
               fontFamily: "Poppins",
               fontWeight: '300',
-              color: 'white',
+              color: barColor,
               textAlign: 'center'
             }}
           >
@@ -105,9 +116,9 @@ export default function StationHeaderCard({ title, info, subtitle, progress, col
               fontSize: 15,
               fontFamily: "Archivo, 'sans-serif'",
               fontWeight: '600',
-              color: '#1a56bb',
+              backgroundColor: '#03182f',
+              color: barColor,
               textTransform: 'uppercase',
-              backgroundColor: '#051e68',
               width: '100%', // Adjusted width
               height: '2.5rem',
               display: 'flex',
@@ -126,7 +137,7 @@ export default function StationHeaderCard({ title, info, subtitle, progress, col
               fontSize: 55,
               fontFamily: "Poppins",
               fontWeight: '700',
-              color: '#8CACFF',
+              color: barColor, // Use the calculated bar color here for background
               textTransform: 'uppercase',
               marginTop: '1rem',
             }}
@@ -134,7 +145,7 @@ export default function StationHeaderCard({ title, info, subtitle, progress, col
             {info}
           </Typography>
           <Typography
-            variant="body2"
+            variant="subtitle1"
             sx={{
               fontSize: 13,
               fontFamily: "Archivo, 'sans-serif'",

@@ -25,8 +25,6 @@ import Water from '../../../img/water.png';
 
 
 
-
-
 export default function GuestView() {
 
     const location = useLocation();
@@ -104,6 +102,8 @@ export default function GuestView() {
     const [stations, setStations] = useState([]);
     const [optimalStation, setOptimalStation] = useState(null);
     const [stationSuggestions, setStationSuggestions] = useState(suggestions['Excellent']);
+    const [defaultStation, setDefaultStation] = useState(null);
+
 
 
 
@@ -133,7 +133,7 @@ export default function GuestView() {
 
     const handleClickStation = (station) => {
         console.log("Clicked station:", station);
-        setOptimalStation(station);
+        setSelectedStation(station);
     
         // Get the status of the clicked station
         const stationStatus = station.status;
@@ -153,7 +153,7 @@ export default function GuestView() {
             });
         }
     
-        console.log("Optimal station:", optimalStation);
+        console.log("Selected station:", selectedStation);
     };
     
     
@@ -163,7 +163,6 @@ export default function GuestView() {
 
 
     useEffect(() => {
-        // Fetch station data from the API
         const fetchStations = async () => {
             try {
                 const response = await fetch('/api/realm/provideStation');
@@ -171,6 +170,16 @@ export default function GuestView() {
                     const data = await response.json();
                     console.log('Fetched stations:', data); 
                     setStations(data);
+
+                    // Find the station with the lowest WQI
+                    let lowestWQIStation = data[0];
+                    data.forEach(station => {
+                        if (station.wqi < lowestWQIStation.wqi) {
+                            lowestWQIStation = station;
+                        }
+                    });
+                    setDefaultStation(lowestWQIStation);
+                    setSelectedStation(lowestWQIStation); // Set default and selected station to the one with lowest WQI
                 } else {
                     console.error('Failed to fetch station data');
                 }
@@ -185,14 +194,19 @@ export default function GuestView() {
 
 
 
+
+
     return(
         <Container maxWidth="lg">
             <Grid container spacing={4} mt={1}>
                 <Grid item xs={12} sm={12} md={12} lg={4}>
-                    <GuestHeaderCard
-                        title={stationDetails.title}
-                        info={stationDetails.info}
-                    />
+                <GuestHeaderCard
+                title={selectedStation ? `Status: ${selectedStation.status}` : 'Status: Unknown'}
+                info={selectedStation ? selectedStation.stationName : (defaultStation ? defaultStation.stationName : 'Unknown Station')}
+                subtitle={selectedStation ? `The ${selectedStation.stationName} has a Water Quality Index of ${parseFloat(selectedStation.wqi).toFixed(2)}, which is interpreted as ${selectedStation.status}` : 'No station selected'}
+                progress={selectedStation ? parseFloat(selectedStation.wqi).toFixed(2) : (defaultStation ? parseFloat(defaultStation.wqi).toFixed(2) : 0)}
+                color={selectedStation ? statusColors[selectedStation.status] : (defaultStation ? statusColors[defaultStation.status] : '#A1E6A6')} // Assuming statusColors is defined
+            />
                 </Grid>
 
 
@@ -308,3 +322,4 @@ export default function GuestView() {
         </Container>
     )
 }
+
