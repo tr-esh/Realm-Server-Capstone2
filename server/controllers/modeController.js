@@ -18,15 +18,15 @@ async function kalmanFilter(inputData) {
 
         const predictions = [];
 
-        // Iterate over each data point to perform Kalman filter prediction
-        for (let i = 0; i < dataTensor.shape[0]; i++) {
-            // Prediction step
-            const predictedStateEstimate = stateEstimate;
-            const predictedErrorCovariance = errorCovariance.add(tf.scalar(1));
+        // Adjust process noise (Q) and measurement noise (R) here
+        const Q = 0.01; // Process noise parameter
+        const R = 0.1;  // Measurement noise parameter
 
-            // Update step (in Kalman filter, we don't have external control input)
+        for (let i = 0; i < dataTensor.shape[0]; i++) {
+            const predictedStateEstimate = stateEstimate;
+            const predictedErrorCovariance = errorCovariance.add(tf.scalar(Q));
             const innovation = dataTensor.slice([i], [1]).sub(predictedStateEstimate);
-            const innovationCovariance = predictedErrorCovariance.add(tf.scalar(1));
+            const innovationCovariance = predictedErrorCovariance.add(tf.scalar(R));
             const kalmanGain = predictedErrorCovariance.div(innovationCovariance);
             
             stateEstimate = predictedStateEstimate.add(kalmanGain.mul(innovation));
@@ -41,6 +41,29 @@ async function kalmanFilter(inputData) {
         console.error('Error in Kalman filter:', error);
         return [];
     }
+}
+
+function interpolateNegativeValues(values) {
+    return values.map((value, index) => {
+        if (value >= 0) {
+            return value; // No need to interpolate if the value is non-negative
+        } else {
+            // Interpolate using neighboring values
+            const prevValue = index > 0 ? values[index - 1] : null;
+            const nextValue = index < values.length - 1 ? values[index + 1] : null;
+            if (prevValue !== null && nextValue !== null) {
+                // Use linear interpolation for simplicity, but other methods could be used
+                return (prevValue + nextValue) / 2; // Average of neighboring values
+            } else {
+                return value; // Unable to interpolate, return original value
+            }
+        }
+    });
+}
+
+
+function replaceNegativeValuesWithMin(values, minValue) {
+    return values.map(value => value < 0 ? minValue : value);
 }
 
 async function filterTemperatureReadings() {
@@ -75,8 +98,10 @@ async function filterTemperatureReadings() {
         for (const [stationId, dateGroups] of Object.entries(groupedReadings)) {
             filteredReadings[stationId] = {};
             for (const [date, values] of Object.entries(dateGroups)) {
+                // Apply interpolation to handle negative values
+                const processedValues = interpolateNegativeValues(values);
                 // Apply kalman filter for each stationId and date
-                filteredReadings[stationId][date] = await kalmanFilter(values);
+                filteredReadings[stationId][date] = await kalmanFilter(processedValues);
             }
         }
 
@@ -220,8 +245,15 @@ async function filterTurbidityReadings() {
         for (const [stationId, dateGroups] of Object.entries(groupedReadings)) {
             filteredReadings[stationId] = {};
             for (const [date, values] of Object.entries(dateGroups)) {
+                // Apply preprocessing: replace negative values with a minimum value
+                const minValue = 0.6000003218650818; // Adjust the minimum value based on your data characteristics
+                const processedValues = replaceNegativeValuesWithMin(values, minValue);
+                
+                // Apply interpolation to handle negative values
+                const interpolatedValues = interpolateNegativeValues(processedValues);
+                
                 // Apply kalman filter for each stationId and date
-                filteredReadings[stationId][date] = await kalmanFilter(values);
+                filteredReadings[stationId][date] = await kalmanFilter(interpolatedValues);
             }
         }
 
@@ -345,8 +377,10 @@ async function filterPhReadings() {
         for (const [stationId, dateGroups] of Object.entries(groupedReadings)) {
             filteredReadings[stationId] = {};
             for (const [date, values] of Object.entries(dateGroups)) {
+                // Apply interpolation to handle negative values
+                const processedValues = interpolateNegativeValues(values);
                 // Apply kalman filter for each stationId and date
-                filteredReadings[stationId][date] = await kalmanFilter(values);
+                filteredReadings[stationId][date] = await kalmanFilter(processedValues);
             }
         }
 

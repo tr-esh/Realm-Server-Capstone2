@@ -33,7 +33,7 @@ export default function StationParameterCard({parameterValue, parameterName, par
                         fontWeight: '500',
                         color: '#1a56bb',
                         textTransform: 'uppercase',
-                        backgroundColor: '#051e68',
+                        backgroundColor: '#03182f',
                         width: '14rem', 
                         height: '1.7rem',
                         display: 'flex',

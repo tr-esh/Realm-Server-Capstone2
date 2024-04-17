@@ -32,6 +32,28 @@ async function kalmanFilter(inputData) {
     }
 }
 
+function interpolateNegativeValues(values) {
+    return values.map((value, index) => {
+        if (value >= 0) {
+            return value; // No need to interpolate if the value is non-negative
+        } else {
+            // Interpolate using neighboring values
+            const prevValue = index > 0 ? values[index - 1] : null;
+            const nextValue = index < values.length - 1 ? values[index + 1] : null;
+            if (prevValue !== null && nextValue !== null) {
+                // Use linear interpolation for simplicity, but other methods could be used
+                return (prevValue + nextValue) / 2; // Average of neighboring values
+            } else {
+                return value; // Unable to interpolate, return original value
+            }
+        }
+    });
+}
+
+function replaceNegativeValuesWithMin(values, minValue) {
+    return values.map(value => value < 0 ? minValue : value);
+}
+
 async function filterTemperatureReadings() {
     try {
         const readings = await TemperatureReading.find({}).sort({ station_id: 1, createdAt: 1 }).lean();
@@ -41,7 +63,7 @@ async function filterTemperatureReadings() {
         readings.forEach(reading => {
             const stationId = reading.station_id;
             const createdAt = new Date(reading.createdAt);
-            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}:${Math.floor(createdAt.getSeconds() / 15) * 15}`;
+            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}`;
 
             if (!groupedReadings[stationId]) {
                 groupedReadings[stationId] = {};
@@ -60,7 +82,8 @@ async function filterTemperatureReadings() {
         for (const [stationId, dateGroups] of Object.entries(groupedReadings)) {
             filteredReadings[stationId] = {};
             for (const [dateKey, values] of Object.entries(dateGroups)) {
-                filteredReadings[stationId][dateKey] = await kalmanFilter(values);
+                const processedValues = interpolateNegativeValues(values); // Interpolate negative values
+                filteredReadings[stationId][dateKey] = await kalmanFilter(processedValues);
             }
         }
 
@@ -87,6 +110,7 @@ const calculateMode = (arr) => {
 
     return mode;
 };
+
 
 async function calculateTemperatureMode() {
     try {
@@ -147,7 +171,7 @@ async function filterTurbidityReadings() {
         readings.forEach(reading => {
             const stationId = reading.station_id;
             const createdAt = new Date(reading.createdAt);
-            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}:${Math.floor(createdAt.getSeconds() / 15) * 15}`;
+            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}`;
 
             if (!groupedReadings[stationId]) {
                 groupedReadings[stationId] = {};
@@ -165,8 +189,16 @@ async function filterTurbidityReadings() {
         const filteredReadings = {};
         for (const [stationId, dateGroups] of Object.entries(groupedReadings)) {
             filteredReadings[stationId] = {};
-            for (const [dateKey, values] of Object.entries(dateGroups)) {
-                filteredReadings[stationId][dateKey] = await kalmanFilter(values);
+            for (const [timeKey, values] of Object.entries(dateGroups)) {
+                // Apply preprocessing: replace negative values with a minimum value
+                const minValue = 0.6000003218650818; // Adjust the minimum value based on your data characteristics
+                const processedValues = replaceNegativeValuesWithMin(values, minValue);
+
+                // Apply interpolation to handle negative values
+                const interpolatedValues = interpolateNegativeValues(processedValues);
+
+                // Apply kalman filter for each stationId and date
+                filteredReadings[stationId][timeKey] = await kalmanFilter(interpolatedValues);
             }
         }
 
@@ -235,7 +267,7 @@ async function filterPhReadings() {
         readings.forEach(reading => {
             const stationId = reading.station_id;
             const createdAt = new Date(reading.createdAt);
-            const timeKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}:${Math.floor(createdAt.getSeconds() / 15) * 15}`;
+            const timeKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}`;
 
             if (!groupedReadings[stationId]) {
                 groupedReadings[stationId] = {};
@@ -251,10 +283,11 @@ async function filterPhReadings() {
         });
 
         const filteredReadings = {};
-        for (const [stationId, timeGroups] of Object.entries(groupedReadings)) {
+        for (const [stationId, dateGroups] of Object.entries(groupedReadings)) {
             filteredReadings[stationId] = {};
-            for (const [timeKey, values] of Object.entries(timeGroups)) {
-                filteredReadings[stationId][timeKey] = await kalmanFilter(values);
+            for (const [timeKey, values] of Object.entries(dateGroups)) {
+                const processedValues = interpolateNegativeValues(values); // Interpolate negative values
+                filteredReadings[stationId][timeKey] = await kalmanFilter(processedValues);
             }
         }
 

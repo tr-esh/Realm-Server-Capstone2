@@ -279,18 +279,24 @@ export default function GuestView() {
                         padding: '1rem',  
                         marginTop: '3px', 
                         fontFamily: 'Poppins' }}>
-                    {stationSuggestions.suggestionSubheader && stationSuggestions.suggestionSubheader.map((suggestion, index) => (
-    <Grid key={index} item xs={12} sm={4} md={4} lg={4}> 
-        <StationRecoCard
-            suggestionImageSrc={stationSuggestions.suggestionImages[index]} // Use corresponding image for each suggestion
-            sx={{
-                backgroundColor: 'transparent',
-                boxShadow: 'none'
-            }}
-            suggestionSubheader={suggestion}
-        />
-    </Grid>
-))}
+                    
+   
+<Grid container spacing={4} sx={{ backgroundColor: '#03182f', borderBottomLeftRadius: '30px', borderBottomRightRadius: '30px', borderTopLeftRadius: '0', borderTopRightRadius: '0', padding: '1rem', marginTop: '3px', fontFamily: 'Poppins' }}>
+    {stationSuggestions.suggestionImages.map((imageSrc, index) => (
+        <Grid key={index} item xs={12} sm={4} md={4} lg={4}>
+            <StationRecoCard
+                suggestionImageSrc={imageSrc}
+                suggestionSubheader={stationSuggestions.suggestionSubheader[index]}
+                sx={{
+                    backgroundColor: 'transparent',
+                    boxShadow: 'none',
+                }}
+            />
+        </Grid>
+    ))}
+</Grid>
+
+
 
                 </Grid>
             </Grid>

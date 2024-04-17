@@ -213,7 +213,8 @@ export default function ViewPerStation () {
                                 backgroundColor: '#8cacff',
                                 marginRight: 1,
                                 fontFamily: "Poppins", 
-                                color: '#001227'
+                                color: '#001227',
+                                fontsize: '0.9rem'
                             }}
                         >
                             Start Monitoring
@@ -224,7 +225,8 @@ export default function ViewPerStation () {
                                 borderRadius: 5,
                                 backgroundColor: '#8cacff',
                                 fontFamily: "Poppins",
-                                color: '#001227'
+                                color: '#001227',
+                                fontsize: '0.9rem'
                             }}
                         >
                             Terminate
