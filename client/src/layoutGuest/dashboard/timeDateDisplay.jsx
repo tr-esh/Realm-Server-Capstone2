@@ -56,9 +56,9 @@ export default function TimeDateDisplay({sx, ...other}) {
                     variant="subtitle2"
                     sx={{
                     fontFamily: "Poppins",
-                    fontWeight: '600',
+                    fontWeight: '400',
                     color: '#8cacff',
-                    marginLeft: '25px',
+                    marginLeft: '20px',
                     textTransform: 'uppercase',
                     }}
                 >

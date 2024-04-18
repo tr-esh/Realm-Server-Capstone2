@@ -27,26 +27,38 @@ export default function StationParameterCard({parameterValue, parameterName, par
                     {parameterName}
                 </Typography>
 
-                <Typography variant="h6"
-                    sx={{ fontSize: 13,
+                <Typography
+                    variant="h6"
+                    sx={{
+                        fontSize: 13,
                         fontFamily: "Archivo, 'sans-serif'",
                         fontWeight: '500',
-                        color: '#1a56bb',
                         textTransform: 'uppercase',
                         backgroundColor: '#03182f',
-                        width: '14rem', 
+                        width: '14rem',
                         height: '1.7rem',
                         display: 'flex',
                         borderRadius: '2rem',
                         textAlign: 'center',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        
-                        
+                        color:
+                            parameterScript === 'Optimal temperature' ||
+                            parameterScript === 'Water is Clean' ||
+                            parameterScript === 'Neutral'
+                                ? '#A1E6A6'
+                                : parameterScript === 'Suboptimal temperature' ||
+                                parameterScript === 'Water is Turbid(Dirty)' ||
+                                parameterScript === 'pH level is Acidic'
+                                ? '#F5B748'
+                                : parameterScript === 'pH level is Alkaline'
+                                ? '#FFFF80'
+                                : '#FFFFFF', // Default color if none of the conditions are met
                     }}
-                 >
+                >
                     {parameterScript}
                 </Typography>
+
 
                 <Typography variant="h2"
                     sx={{

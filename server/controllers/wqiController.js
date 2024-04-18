@@ -113,13 +113,18 @@ const checkExistingData = async (stationId, date) => {
 
 const saveWQIResultToDatabase = async (stationId, date, wqi, status) => {
     try {
+        // Replace negative wqi values with zero
+        const adjustedWqi = Math.max(wqi, 0);
+
+        // Determine status based on adjusted wqi value
+        const adjustedStatus = determineStatus(adjustedWqi);
 
         // Create a new instance of the WQIResult model
         const wqiResult = new WQIResult({
             stationId,
             date,
-            wqi, 
-            status
+            wqi: adjustedWqi, 
+            status: adjustedStatus
         });
 
         // Save the WQI result to the database

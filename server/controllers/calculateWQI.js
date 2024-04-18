@@ -2,7 +2,9 @@ const TemperatureReading = require('../models/temperatureModel');
 const TurbidityModel = require('../models/turbidityModel');
 const pHModel = require('../models/phLevelModel');
 const ModeValues = require('../models/modeForWQIModel');
+const WqiResult = require('../models/WqiResultModel');
 const tf = require('@tensorflow/tfjs-node');
+const cron = require('node-cron');
 
 // KalmanFilter initialization and training
 async function kalmanFilter(inputData) {
@@ -56,14 +58,24 @@ function replaceNegativeValuesWithMin(values, minValue) {
 
 async function filterTemperatureReadings() {
     try {
-        const readings = await TemperatureReading.find({}).sort({ station_id: 1, createdAt: 1 }).lean();
+        const readings = await TemperatureReading.aggregate([
+            { $sort: { station_id: 1, createdAt: -1 } }, // Sort by station_id and createdAt descending
+            {
+                $group: {
+                    _id: '$station_id',
+                    latestReading: { $first: '$$ROOT' } // Get the first (latest) document for each station_id
+                }
+            },
+            { $replaceRoot: { newRoot: '$latestReading' } } // Replace the document root with the latest reading
+        ]);
+        
         const groupedReadings = {};
         const latestCreatedAtPerGroup = {};
 
         readings.forEach(reading => {
             const stationId = reading.station_id;
             const createdAt = new Date(reading.createdAt);
-            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}`;
+            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}:${Math.floor(createdAt.getSeconds() / 15) * 15}`;
 
             if (!groupedReadings[stationId]) {
                 groupedReadings[stationId] = {};
@@ -164,14 +176,24 @@ async function getModeTemperature(req, res) {
 
 async function filterTurbidityReadings() {
     try {
-        const readings = await TurbidityModel.find({}).sort({ station_id: 1, createdAt: 1 }).lean();
+        const readings = await TurbidityModel.aggregate([
+            { $sort: { station_id: 1, createdAt: -1 } }, // Sort by station_id and createdAt descending
+            {
+                $group: {
+                    _id: '$station_id',
+                    latestReading: { $first: '$$ROOT' } // Get the first (latest) document for each station_id
+                }
+            },
+            { $replaceRoot: { newRoot: '$latestReading' } } // Replace the document root with the latest reading
+        ]);
+
         const groupedReadings = {};
         const latestCreatedAtPerGroup = {};
 
         readings.forEach(reading => {
             const stationId = reading.station_id;
             const createdAt = new Date(reading.createdAt);
-            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}`;
+            const dateKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}:${Math.floor(createdAt.getSeconds() / 15) * 15}`;
 
             if (!groupedReadings[stationId]) {
                 groupedReadings[stationId] = {};
@@ -191,7 +213,7 @@ async function filterTurbidityReadings() {
             filteredReadings[stationId] = {};
             for (const [timeKey, values] of Object.entries(dateGroups)) {
                 // Apply preprocessing: replace negative values with a minimum value
-                const minValue = 0.6000003218650818; // Adjust the minimum value based on your data characteristics
+                const minValue = 1.65; // Adjust the minimum value based on your data characteristics
                 const processedValues = replaceNegativeValuesWithMin(values, minValue);
 
                 // Apply interpolation to handle negative values
@@ -260,14 +282,24 @@ async function getModeTurbidity(req, res) {
 
 async function filterPhReadings() {
     try {
-        const readings = await pHModel.find({}).sort({ station_id: 1, createdAt: 1 }).lean();
+        const readings  = await pHModel.aggregate([
+            { $sort: { station_id: 1, createdAt: -1 } }, // Sort by station_id and createdAt descending
+            {
+                $group: {
+                    _id: '$station_id',
+                    latestReading: { $first: '$$ROOT' } // Get the first (latest) document for each station_id
+                }
+            },
+            { $replaceRoot: { newRoot: '$latestReading' } } // Replace the document root with the latest reading
+        ]);
+
         const groupedReadings = {};
         const latestCreatedAtPerGroup = {};
 
         readings.forEach(reading => {
             const stationId = reading.station_id;
             const createdAt = new Date(reading.createdAt);
-            const timeKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}`;
+            const timeKey = `${createdAt.toISOString().split('T')[0]}T${createdAt.getHours()}:${createdAt.getMinutes()}:${Math.floor(createdAt.getSeconds() / 15) * 15}`;
 
             if (!groupedReadings[stationId]) {
                 groupedReadings[stationId] = {};
@@ -344,96 +376,20 @@ async function getModePH(req, res) {
     }
 };
 
-// Controller for calculating WQI
-const calculateWQIForStation = async (req, res) => {
-    try {
-        // Fetch latest mode data from MongoDB using your existing controller
-        const latestModeData = await ModeValues.aggregate([
-            { $sort: { station_id: 1, paramName: 1, createdAt: -1 } },
-            {
-                $group: {
-                    _id: { station_id: "$station_id", paramName: "$paramName" },
-                    latestRecord: { $first: "$$ROOT" }
-                }
-            },
-            {
-                $replaceRoot: { newRoot: "$latestRecord" }
-            }
-        ]);
-
-        // Calculate WQI for each station
-        const wqiResults = {};
-        latestModeData.forEach((record) => {
-            const { station_id, paramName, paramValue } = record;
-
-            if (!wqiResults[station_id]) {
-                wqiResults[station_id] = {};
-            }
-
-            // Assign parameter values to the station's WQI calculation
-            switch (paramName) {
-                case 'Temperature':
-                    wqiResults[station_id].temperature = paramValue;
-                    break;
-                case 'Turbidity':
-                    wqiResults[station_id].turbidity = paramValue;
-                    break;
-                case 'pH':
-                    wqiResults[station_id].pH = paramValue;
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        // Calculate WQI for each station with valid parameter values
-        Object.keys(wqiResults).forEach((station_id) => {
-            const { temperature, turbidity, pH } = wqiResults[station_id];
-
-            if (temperature !== undefined && turbidity !== undefined && pH !== undefined) {
-                const wqi = calculateWQI(temperature, turbidity, pH);
-                wqiResults[station_id].wqi = wqi;
-            }
-        });
-
-        // Send WQI results as JSON response
-        res.json(wqiResults);
-    } catch (error) {
-        console.error('Error fetching and calculating WQI:', error);
-
-        // Handle errors by sending an appropriate response
-        if (res && res.status) {
-            res.status(500).json({ error: 'Internal server error' });
-        } else {
-            // If `res` object is not properly defined
-            console.error('Response object is undefined or invalid.');
-            // You might want to throw the error to stop execution or handle it accordingly
-            throw error;
-        }
-    }
-};
-
-// Controller to get the latest mode data for each parameter
-const getLatestModeDataForEachParameter = async (req, res) => {
-    try {
-        const latestModeData = await ModeValues.aggregate([
-            { $sort: { station_id: 1, paramName: 1, createdAt: -1 } },
-            {
-                $group: {
-                    _id: { station_id: "$station_id", paramName: "$paramName" },
-                    latestRecord: { $first: "$$ROOT" }
-                }
-            },
-            {
-                $replaceRoot: { newRoot: "$latestRecord" }
-            }
-        ]);
-
-        res.json(latestModeData);
-    } catch (error) {
-        console.error('Error fetching latest mode data:', error);
-        console.log('Response object:', res); // Add this line for debugging
-        throw new Error('Error fetching latest mode data: ' + error.message);
+const determineStatus = (wqi) => {
+    if (wqi >= 0 && wqi <= 25) {
+        return 'Excellent';
+    } else if (wqi > 25 && wqi <= 50) {
+        return 'Good';
+    } else if (wqi > 50 && wqi <= 75) {
+        return 'Fair';
+    } else if (wqi > 75 && wqi <= 100) {
+        return 'Poor';
+    } else if (wqi > 100 && wqi <= 150) {
+        return 'Very Poor';
+    } else {
+        // Handle any other cases here
+        return 'Unknown';
     }
 };
 
@@ -463,21 +419,118 @@ const calculateWQI = (temperatureMode, turbidityMode, pHMode) => {
     return wqi;
 };
 
-const wqiCalculationController = async (req, res) => {
+// Standalone Function for fetching and calculating WQI
+const fetchAndCalculateWQI = async () => {
     try {
-        const WQIResult = await calculateWQIForStation();
-        res.json(WQIResult);
+        const latestModeData = await ModeValues.aggregate([
+            { $sort: { station_id: 1, paramName: 1, createdAt: -1 } },
+            {
+                $group: {
+                    _id: { station_id: "$station_id", paramName: "$paramName" },
+                    latestRecord: { $first: "$$ROOT" }
+                }
+            },
+            {
+                $replaceRoot: { newRoot: "$latestRecord" }
+            }
+        ]);
+
+        const wqiResults = {};
+        latestModeData.forEach((record) => {
+            const { station_id, paramName, paramValue, createdAt } = record;
+
+            if (!wqiResults[station_id]) {
+                wqiResults[station_id] = {};
+            }
+
+            switch (paramName) {
+                case 'Temperature':
+                    wqiResults[station_id].temperature = paramValue;
+                    break;
+                case 'Turbidity':
+                    wqiResults[station_id].turbidity = paramValue;
+                    break;
+                case 'pH':
+                    wqiResults[station_id].pH = paramValue;
+                    break;
+            }
+            wqiResults[station_id].createdAt = createdAt;
+        });
+
+        Object.keys(wqiResults).forEach(station_id => {
+            const { temperature, turbidity, pH } = wqiResults[station_id];
+            if (temperature !== undefined && turbidity !== undefined && pH !== undefined) {
+                // Calculate WQI and replace negative values with zero
+                let wqi = calculateWQI(temperature, turbidity, pH);
+                wqi = Math.max(wqi, 0);
+
+                // Determine status based on adjusted WQI value
+                const status = determineStatus(wqi);
+
+                wqiResults[station_id] = { wqi, status, createdAt: wqiResults[station_id].createdAt };
+            } else {
+                wqiResults[station_id].status = 'Unknown';
+            }
+        });
+
+        return wqiResults;
     } catch (error) {
-        console.error(error);
-        res.json({ message: 'Internal Server Error' });
+        console.error('Error fetching and calculating WQI:', error);
+        throw error;
     }
 };
+
+// Controller using the standalone function
+const calculateWQIForStation = async (req, res) => {
+    try {
+        const wqiResults = await fetchAndCalculateWQI();
+        res.json(wqiResults);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Your function to save wqiResults to the database
+const saveWqiResultsToDatabase = async (wqiResults) => {
+    try {
+        for (const stationId in wqiResults) {
+            const wqiData = wqiResults[stationId];
+            
+            // Replace negative wqi values with zero
+            const wqi = Math.max(wqiData.wqi, 0);
+            
+            // Calculate status based on the adjusted wqi value
+            const status = determineStatus(wqi);
+            
+            const newWqiResult = new WqiResult({
+                stationId: stationId,
+                wqi: wqi,
+                status: status,
+                createdAt: wqiData.createdAt
+            });
+            
+            await newWqiResult.save();
+        }
+        console.log('wqiResults saved to database successfully.');
+    } catch (error) {
+        throw new Error('Error saving wqiResults to database: ' + error.message);
+    }
+};
+
+// Cron job to run every minute
+cron.schedule('* * * * *', async (req, res) => {
+    try {
+        const wqiResults = await fetchAndCalculateWQI();
+        await saveWqiResultsToDatabase(wqiResults);
+        console.log('WQI results saved to database successfully.');
+    } catch (error) {
+        console.error('Error saving WQI results to database:', error);
+    }
+});
 
 module.exports = {
     getModeTemperature,
     getModeTurbidity,
     getModePH,
-    getLatestModeDataForEachParameter,
-    wqiCalculationController,
     calculateWQIForStation
 };

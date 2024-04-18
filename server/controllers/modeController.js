@@ -246,7 +246,7 @@ async function filterTurbidityReadings() {
             filteredReadings[stationId] = {};
             for (const [date, values] of Object.entries(dateGroups)) {
                 // Apply preprocessing: replace negative values with a minimum value
-                const minValue = 0.6000003218650818; // Adjust the minimum value based on your data characteristics
+                const minValue = 1.65; // Adjust the minimum value based on your data characteristics
                 const processedValues = replaceNegativeValuesWithMin(values, minValue);
                 
                 // Apply interpolation to handle negative values

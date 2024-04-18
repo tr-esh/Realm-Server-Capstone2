@@ -18,7 +18,7 @@ const { getAllDocuments } = require('../controllers/getDocument')
 const { calculateWQIController, identifyStationController, getAllWQIPoorValues } = require('../controllers/wqiController');
 const { predictWQI, getWQIPredictions, fetchWQIData } = require('../controllers/predictionWQI');
 const { predictNext5DaysWQIForStations, preprocessAndTrainModels } = require("../controllers/wqiPrediction");
-const { calculateStationWQI, getModeTemperature, getModeTurbidity, getModePH, wqiCalculationController, getLatestModeDataForEachParameter, calculateWQIForStation  } = require("../controllers/calculateWQI");
+const { getModeTemperature, getModeTurbidity, getModePH, calculateWQIForStation  } = require("../controllers/calculateWQI");
 
 // for station creation
 const storage = multer.memoryStorage(); // Store files in memory as buffers
@@ -64,7 +64,6 @@ router.get('/paramMode', getAllMode);
 router.get('/fetchTempMode', getModeTemperature)
 router.get('/fetchTurbidityMode', getModeTurbidity)
 router.get('/fetchPhMode', getModePH)
-router.get('/getAllMode', getLatestModeDataForEachParameter)
 
 //get request for notification
 router.get('/getRequest', getAllDocuments)

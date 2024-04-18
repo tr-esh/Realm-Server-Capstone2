@@ -88,6 +88,7 @@ const handleAvailableStationsRequest = async (req, res) => {
 
 
 //Function for getting lastest data of each parameters
+//Function for getting latest data of each parameter
 const fetchLatestParameterData = async (req, res) => {
   try {
     // Assuming you have a station ID in the request parameters
@@ -119,10 +120,16 @@ const fetchLatestParameterData = async (req, res) => {
     const response = {};
 
     if (latestTemperatureReading) {
+      let temperatureScript;
+      if (latestTemperatureReading.paramValue >= 25 && latestTemperatureReading.paramValue <= 50) {
+        temperatureScript = 'Optimal temperature';
+      } else {
+        temperatureScript = 'Suboptimal temperature';
+      }
       response.temperature = {
         paramName: latestTemperatureReading.paramName,
         paramValue: latestTemperatureReading.paramValue,
-        parameterScript: 'measured by degree celsius',
+        parameterScript: temperatureScript,
         unit: '°C',
       };
     }
@@ -131,16 +138,24 @@ const fetchLatestParameterData = async (req, res) => {
       response.turbidity = {
         paramName: latestTurbidityReading.paramName,
         paramValue: latestTurbidityReading.paramValue,
-        parameterScript: 'measured by ntu',
+        parameterScript: latestTurbidityReading.paramValue < 5 ? 'Water is Clean' : 'Water is Turbid(Dirty)',
         unit: 'ntu',
       };
     }
 
     if (latestPhReading) {
+      let pHScript;
+      if (latestPhReading.paramValue === 7.0) {
+        pHScript = 'Neutral';
+      } else if (latestPhReading.paramValue < 7) {
+        pHScript = 'Acidic';
+      } else {
+        pHScript = 'Alkaline';
+      }
       response.pH = {
         paramName: latestPhReading.paramName,
         paramValue: latestPhReading.paramValue,
-        parameterScript: 'measured by pH level',
+        parameterScript: `pH level is ${pHScript}`,
         unit: 'pH',
       };
     }
@@ -157,6 +172,7 @@ const fetchLatestParameterData = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 const fetchStationParameterData = async (station) => {
   const stationId = station._id.toString();

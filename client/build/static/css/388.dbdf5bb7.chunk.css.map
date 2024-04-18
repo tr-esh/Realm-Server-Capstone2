@@ -1,1 +1,0 @@
-{"version":3,"file":"static/css/388.dbdf5bb7.chunk.css","mappings":"AAAA,yBACI,mBACE,wBAAyB,CACzB,WAAY,CACZ,UACF,CACF","sources":["components/styles/StationCardMainStyle.css"],"sourcesContent":["@media (max-width: 900px) {\r\n    .station-card-main {\r\n      background-color: #0d2135;\r\n      height: 100%;\r\n      width: 100%;\r\n    }\r\n  }"],"names":[],"sourceRoot":""}

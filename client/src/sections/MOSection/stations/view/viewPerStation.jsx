@@ -27,6 +27,7 @@ export default function ViewPerStation () {
     const [parameterData, setParameterData] = useState([]);
 
     const [activityStationLogs, setActivityStationLogs] = useState([]);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -76,8 +77,10 @@ export default function ViewPerStation () {
                 subtitle: ` ${stationId} is interpreted as ${latestEntry.status} with a WQI result ${latestEntry.wqi.toFixed(2)} ${changeType} by ${Math.abs(percentageChange).toFixed(2)}% since ${new Date(latestEntry.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`,
                 progress: parseFloat(latestEntry.wqi.toFixed(2))
               });
+               
             } else {
-              console.error('Station data not found');
+              // If no latest data available, trigger fetching initial data
+              setIsInitialized(true);
             }
           } catch (error) {
             console.error('Error fetching station data:', error);
@@ -86,6 +89,39 @@ export default function ViewPerStation () {
     
         fetchStationData();
       }, [stationId]); // Fetch data whenever stationId changes
+      
+      useEffect(() => {
+        const fetchInitialData = async () => {
+            if (isInitialized) {
+                try {
+                    const response = await fetch(`/api/realm/wqiResult`);
+                    if (!response.ok) throw new Error('Failed to fetch station data');
+                    const data = await response.json();
+                    
+                    if (data[stationId]) {
+                        const latestEntry = data[stationId];
+                        const { wqi, status, createdAt } = latestEntry;
+
+                        // Update station details state
+                        setStationDetails({
+                            ...stationDetails,
+                            info: status,
+                            subtitle: `${stationId} is interpreted as ${status} with a WQI result ${wqi.toFixed(2)} since ${new Date(createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`,
+                            progress: parseFloat(wqi.toFixed(2))
+                        });
+
+                    } else {
+                        console.error('Station data not found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching station data:', error);
+                }
+            }
+        };
+
+        fetchInitialData();
+    }, [isInitialized, stationId]);
+      
 
     useEffect(() => {
         const fetchParameterData = async () => {
@@ -140,6 +176,7 @@ export default function ViewPerStation () {
         // If the startMonitoring operation was successful, store the user ID
         if (response.status === 201) {
           lastUserId = data.userId; // Assuming your server returns the created user ID
+          setIsInitialized(true); // Set initialization status to true if successful
         }
       } catch (error) {
         // Handle errors during initialization
@@ -159,6 +196,7 @@ export default function ViewPerStation () {
       } catch (error) {
         console.error('Error:', error.message);
       }
+      setIsInitialized(false);
     };
 
     const progressData = [
@@ -175,7 +213,6 @@ export default function ViewPerStation () {
                         info={stationDetails.title}
                         subtitle={stationDetails.subtitle}
                         progress={stationDetails.progress}
-                       
                      />
                 </Grid>
 

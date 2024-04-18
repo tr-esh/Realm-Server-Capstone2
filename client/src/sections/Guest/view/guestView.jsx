@@ -201,17 +201,46 @@ export default function GuestView() {
             <Grid container spacing={4} mt={1}>
                 <Grid item xs={12} sm={12} md={12} lg={4}>
                 <GuestHeaderCard
-                title={selectedStation ? `Status: ${selectedStation.status}` : 'Status: Unknown'}
-                info={selectedStation ? selectedStation.stationName : (defaultStation ? defaultStation.stationName : 'Unknown Station')}
-                subtitle={selectedStation ? `The ${selectedStation.stationName} has a Water Quality Index of ${parseFloat(selectedStation.wqi).toFixed(2)}, which is interpreted as ${selectedStation.status}` : 'No station selected'}
-                progress={selectedStation ? parseFloat(selectedStation.wqi).toFixed(2) : (defaultStation ? parseFloat(defaultStation.wqi).toFixed(2) : 0)}
-                color={selectedStation ? statusColors[selectedStation.status] : (defaultStation ? statusColors[defaultStation.status] : '#A1E6A6')} // Assuming statusColors is defined
-            />
+                        title={selectedStation ? `Status: ${selectedStation.status}` : 'Status: Unknown'}
+                        info={selectedStation ? selectedStation.stationName : (defaultStation ? defaultStation.stationName : 'Unknown Station')}
+                        subtitle={selectedStation ? `The ${selectedStation.stationName} has a Water Quality Index of ${parseFloat(selectedStation.wqi).toFixed(2)}, which is interpreted as ${selectedStation.status}` : 'No station selected'}
+                        progress={selectedStation ? parseFloat(selectedStation.wqi).toFixed(2) : (defaultStation ? parseFloat(defaultStation.wqi).toFixed(2) : 0)}
+                        color={selectedStation ? statusColors[selectedStation.status] : (defaultStation ? statusColors[defaultStation.status] : '#A1E6A6')} // Assuming statusColors is defined
+                    />
                 </Grid>
 
-
+                <Grid item xs={12} sm={12} md={12} lg={12} sx={{ order: { xs: 2, sm: 2, md: 3, lg: 3 }}}>
+                   <div style={{ backgroundColor: '#001227', padding: '3ch', borderTopLeftRadius: '30px', borderTopRightRadius: '30px' }}>
+                   <Typography variant="h7" sx={{ color: '#8cacff', fontFamily: "Poppins", fontWeight: 700, textTransform: 'uppercase'}}>
+                        Recommended for you today!
+                    </Typography>
+                   </div>
+                   <Grid spacing={4} py={4}
+                        sx={{ 
+                            backgroundColor: '#03182f', 
+                            borderBottomLeftRadius: '30px', 
+                            borderBottomRightRadius: '30px',
+                            fontFamily: 'Poppins',
+                            display: 'flex', // Setting display to flex
+                            flexDirection: 'row' // Setting flex-direction to row
+                        }}
+                    >
+                    {stationSuggestions.suggestionImages.map((imageSrc, index) => (
+                        <Grid key={index} item xs={4} sm={4} md={12} lg={12}>
+                        <StationRecoCard
+                            suggestionImageSrc={imageSrc}
+                            suggestionSubheader={stationSuggestions.suggestionSubheader[index]}
+                            sx={{
+                            backgroundColor: 'transparent',
+                            boxShadow: 'none',
+                            }}
+                        />
+                        </Grid>
+                    ))}
+                    </Grid>
+                </Grid>
               
-                <Grid item xs={12} sm={12} md={12} lg={8}>  
+                <Grid item xs={12} sm={12} md={12} lg={8} sx={{ order: { xs: 3, sm: 3, md: 2, lg: 2 }}}>  
                     <Paper sx={{ borderRadius: '15px', overflow: 'hidden', backgroundColor: 'transparent', boxShadow: 'none' }}>
                         <div >
                             <Table>
@@ -263,54 +292,13 @@ export default function GuestView() {
                     </Paper>
                 </Grid>
 
-              
-                <Grid container spacing={4} mt={5} sx={{ borderRadius: '15px', overflow: 'hidden', boxShadow: 'none' , marginLeft: 5}}>
-                <Grid item  xs={12} sm={12} md={12} lg={12} sx={{ backgroundColor: '#001227', borderTopLeftRadius: '30px', borderTopRightRadius: '30px', borderBottomLeftRadius: '0', borderBottomRightRadius: '0', padding: '1rem' }}>
-                    <Typography variant="h7" sx={{ color: '#8cacff', fontFamily: "Poppins", fontWeight: 700, textTransform: 'uppercase' }}>
-                        Recommended for you today!
-                    </Typography>
-                </Grid>
-                <Grid container spacing={4} 
-                    sx={{ backgroundColor: '#03182f', 
-                        borderBottomLeftRadius: '30px', 
-                        borderBottomRightRadius: '30px', 
-                        borderTopLeftRadius: '0', 
-                        borderTopRightRadius: '0', 
-                        padding: '1rem',  
-                        marginTop: '3px', 
-                        fontFamily: 'Poppins' }}>
-                    
-   
-<Grid container spacing={4} sx={{ backgroundColor: '#03182f', borderBottomLeftRadius: '30px', borderBottomRightRadius: '30px', borderTopLeftRadius: '0', borderTopRightRadius: '0', padding: '1rem', marginTop: '3px', fontFamily: 'Poppins' }}>
-    {stationSuggestions.suggestionImages.map((imageSrc, index) => (
-        <Grid key={index} item xs={12} sm={4} md={4} lg={4}>
-            <StationRecoCard
-                suggestionImageSrc={imageSrc}
-                suggestionSubheader={stationSuggestions.suggestionSubheader[index]}
-                sx={{
-                    backgroundColor: 'transparent',
-                    boxShadow: 'none',
-                }}
-            />
-        </Grid>
-    ))}
-</Grid>
-
-
-
-                </Grid>
-            </Grid>
-
-
-           
-
-            <Grid item xs={12} sm={12} md={12} mt={6} sx={{marginLeft: 4}}>
+            <Grid item xs={12} sm={12} md={12} mt={6} sx={{ order: { xs: 4, sm: 4, md: 4, lg: 4}}}>
                     <Typography variant="h7" sx={{ color: '#8cacff', fontFamily: "Poppins", fontWeight: 700, textTransform: 'uppercase' }}>
                     Gain Insights 💭
                     </Typography>
             </Grid>
 
-            <Grid container spacing={4} margin={1}>
+            <Grid container spacing={4} margin={1} sx={{ order: { xs: 4, sm: 4, md: 4, lg: 4}}}>
               {Headline.map((news, index) => (
                 <Grid key={index} item xs={12} sm={6} md={6} lg={6}>
                     <NewsCard key={index} {...news} sx={{ backgroundColor: '#0A1929' }} />
